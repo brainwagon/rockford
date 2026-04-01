@@ -76,25 +76,44 @@ export const FONT_PAIRS = {
 
 /**
  * Injects a Google Fonts link tag into the document head for the given font pair ID.
+ * Returns a Promise that resolves when the stylesheet is loaded.
  * @param {string} pairId - The ID of the font pair to inject.
+ * @returns {Promise} Resolves when the font stylesheet is injected and loaded.
  */
 export function injectGoogleFonts(pairId) {
     if (pairId === 'default' || !FONT_PAIRS[pairId]) {
-        return;
+        return Promise.resolve();
     }
 
     const pair = FONT_PAIRS[pairId];
     const linkId = `google-fonts-${pairId}`;
 
     if (document.getElementById(linkId)) {
-        return;
+        return Promise.resolve();
     }
 
-    const link = document.createElement('link');
-    link.id = linkId;
-    link.rel = 'stylesheet';
-    link.href = pair.googleFontsUrl;
-    document.head.appendChild(link);
+    return new Promise((resolve, reject) => {
+        const link = document.createElement('link');
+        link.id = linkId;
+        link.rel = 'stylesheet';
+        link.href = pair.googleFontsUrl;
+        
+        link.onload = () => resolve();
+        link.onerror = () => reject(new Error(`Failed to load font stylesheet for ${pairId}`));
+        
+        document.head.appendChild(link);
+    });
+}
+
+/**
+ * Returns a Promise that resolves when all fonts in the document are loaded.
+ * @returns {Promise}
+ */
+export function waitForFontsToLoad() {
+    if (document.fonts && document.fonts.ready) {
+        return document.fonts.ready;
+    }
+    return Promise.resolve();
 }
 
 /**

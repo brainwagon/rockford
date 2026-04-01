@@ -2,8 +2,20 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { initApp } from '../js/app.js';
 import * as fonts from '../js/fonts.js';
+
+// We need to mock the module BEFORE importing initApp if we want to spy on its exports
+// since ES modules are statically bound.
+vi.mock('../js/fonts.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    injectGoogleFonts: vi.fn(() => Promise.resolve()),
+    applyFontPair: vi.fn(),
+  };
+});
+
+import { initApp } from '../js/app.js';
 
 describe('Font Selection Integration', () => {
   beforeEach(() => {
@@ -33,21 +45,43 @@ describe('Font Selection Integration', () => {
       </main>
     `;
     
-    // Mock fonts functions
-    vi.spyOn(fonts, 'injectGoogleFonts');
-    vi.spyOn(fonts, 'applyFontPair');
-    
     vi.clearAllMocks();
     initApp();
   });
 
-  it('should call injectGoogleFonts and applyFontPair when selection changes', () => {
+  it('should call injectGoogleFonts and applyFontPair when selection changes', async () => {
     const fontSelect = document.getElementById('font-select');
     fontSelect.value = 'montserrat_merriweather';
     fontSelect.dispatchEvent(new Event('change'));
     
+    // Wait for async handler
+    await vi.waitFor(() => {
+        expect(fonts.applyFontPair).toHaveBeenCalledWith('montserrat_merriweather');
+    });
+    
     expect(fonts.injectGoogleFonts).toHaveBeenCalledWith('montserrat_merriweather');
-    expect(fonts.applyFontPair).toHaveBeenCalledWith('montserrat_merriweather');
+  });
+
+  it('should wait for injectGoogleFonts before applying font pair', async () => {
+    let resolveFont;
+    const fontPromise = new Promise(res => { resolveFont = res; });
+    vi.mocked(fonts.injectGoogleFonts).mockReturnValue(fontPromise);
+    
+    const fontSelect = document.getElementById('font-select');
+    fontSelect.value = 'montserrat_merriweather';
+    fontSelect.dispatchEvent(new Event('change'));
+    
+    expect(fonts.injectGoogleFonts).toHaveBeenCalled();
+    // At this point, applyFontPair should NOT have been called with montserrat_merriweather yet
+    // because we haven't resolved fontPromise. 
+    // It might have been called with 'default' during initApp.
+    expect(fonts.applyFontPair).not.toHaveBeenCalledWith('montserrat_merriweather');
+    
+    resolveFont();
+    
+    await vi.waitFor(() => {
+        expect(fonts.applyFontPair).toHaveBeenCalledWith('montserrat_merriweather');
+    });
   });
 
   it('should apply the default fonts on init when no state is present', () => {

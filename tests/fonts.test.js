@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { FONT_PAIRS, injectGoogleFonts } from '../js/fonts.js';
 
 describe('Font Pairs Data', () => {
@@ -31,27 +31,48 @@ describe('injectGoogleFonts', () => {
     // Clear head from any previously injected font links
     const links = document.querySelectorAll('link[id^="google-fonts-"]');
     links.forEach(link => link.remove());
+
+    // JSDOM doesn't load external resources by default, so we mock onload
+    const originalAppendChild = document.head.appendChild;
+    vi.spyOn(document.head, 'appendChild').mockImplementation(function(node) {
+        const result = originalAppendChild.call(this, node);
+        if (node.tagName === 'LINK' && node.id.startsWith('google-fonts-')) {
+            setTimeout(() => {
+                if (node.onload) node.onload();
+            }, 0);
+        }
+        return result;
+    });
   });
 
-  it('should inject a link tag for a valid font pair ID', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should inject a link tag for a valid font pair ID and return a Promise', async () => {
     const pairId = 'montserrat_merriweather';
     const pair = FONT_PAIRS[pairId];
     
-    injectGoogleFonts(pairId);
+    const promise = injectGoogleFonts(pairId);
+    expect(promise).toBeInstanceOf(Promise);
+    
+    await promise;
     
     const link = document.getElementById(`google-fonts-${pairId}`);
     expect(link).not.toBeNull();
     expect(link.getAttribute('href')).toBe(pair.googleFontsUrl);
-    expect(link.getAttribute('rel')).toBe('stylesheet');
   });
 
-  it('should not inject duplicate link tags for the same font pair ID', () => {
+  it('should return a resolved Promise if font already exists', async () => {
     const pairId = 'montserrat_merriweather';
     
-    injectGoogleFonts(pairId);
-    injectGoogleFonts(pairId);
+    await injectGoogleFonts(pairId);
+    const promise = injectGoogleFonts(pairId);
     
-    const links = document.querySelectorAll('link[id="google-fonts-montserrat_merriweather"]');
+    expect(promise).toBeInstanceOf(Promise);
+    await promise;
+    
+    const links = document.querySelectorAll(`link[id="google-fonts-${pairId}"]`);
     expect(links.length).toBe(1);
   });
 

@@ -143,9 +143,9 @@ export function initApp() {
 
     // Typography Logic
     if (fontSelect && businessCard) {
-        fontSelect.addEventListener('change', (e) => {
+        fontSelect.addEventListener('change', async (e) => {
             const selectedPair = e.target.value;
-            injectGoogleFonts(selectedPair);
+            await injectGoogleFonts(selectedPair);
             applyFontPair(selectedPair);
             runLayoutEngine(true);
             saveToLocalStorage();
@@ -280,7 +280,7 @@ export function initApp() {
         });
     }
 
-    const loadFromLocalStorage = () => {
+    const loadFromLocalStorage = async () => {
         const saved = localStorage.getItem('bmaker_state');
         if (!saved) return;
 
@@ -308,7 +308,7 @@ export function initApp() {
 
             if (state.fontPairId) {
                 fontSelect.value = state.fontPairId;
-                injectGoogleFonts(state.fontPairId);
+                await injectGoogleFonts(state.fontPairId);
                 applyFontPair(state.fontPairId);
             }
 
