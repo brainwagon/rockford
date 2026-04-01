@@ -31,6 +31,6 @@
 - [x] Task: Sync with Layout Engine (f99df10)
     - [x] Write tests to ensure `runLayoutEngine` is called *after* fonts are loaded.
     - [x] Implement a listener or promise-based wait for font loading before triggering layout recalculation.
-- [~] Task: Visual Polish & Error Handling
-    - [ ] Add loading indicators or graceful fallbacks for CDN failures.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Integration & Layout Refinement' (Protocol in workflow.md)
+- [x] Task: Visual Polish & Error Handling (f327032)
+    - [x] Add loading indicators or graceful fallbacks for CDN failures.
+- [~] Task: Conductor - User Manual Verification 'Phase 4: Integration & Layout Refinement' (Protocol in workflow.md)
