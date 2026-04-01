@@ -3,6 +3,16 @@ import { JSDOM } from 'jsdom';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import * as fonts from '../js/fonts.js';
+
+// Mock fonts to avoid hangs in JSDOM
+vi.mock('../js/fonts.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    injectGoogleFonts: vi.fn(() => Promise.resolve()),
+  };
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
