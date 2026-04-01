@@ -9,11 +9,11 @@
     - [x] Implement auto-load logic on page initialization
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Core Persistence Logic' (Protocol in workflow.md)
 
-## Phase 2: Branding & QR Persistence
+## Phase 2: Branding & QR Persistence [checkpoint: ed6df82]
 - [x] Task: Persist Uploaded Logo (a70e2fe)
     - [x] Write tests for base64 logo storage and retrieval
     - [x] Implement logo persistence and restoration
 - [x] Task: Persist QR Code State (6c35251)
     - [x] Write tests for QR toggle and data persistence
     - [x] Implement QR state restoration
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Branding & QR Persistence' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Branding & QR Persistence' (Protocol in workflow.md)
