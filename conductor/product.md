@@ -15,7 +15,7 @@ To provide a simple, elegant, and efficient way for individual professionals to 
 1. **Template Selection:** Users can choose from a variety of pre-defined, professional layouts that reflect a classic and elegant aesthetic.
 2. **Logo/Image Upload:** Integration for users to add their own brand logo or a personalized background image.
 3. **QR Code Generator:** Built-in tool to generate and place QR codes for personal websites, LinkedIn profiles, or digital contact info.
-4. **Interactive Editor:** A simple UI for real-time preview of the business card as users customize text and images.
+4. **Interactive Editor:** A simple UI for real-time preview of the business card as users customize text, optional company name, and images.
 5. **Standardized Formatting:** Automatic real-time formatting for critical contact data, such as phone numbers, to ensure a professional and consistent appearance.
 6. **Session Persistence:** Automatic saving of the editor state to local storage, ensuring user data and design choices are preserved between sessions.
 7. **Sophisticated Layout Engine:** Automated iterative font-scaling algorithm that prevents text collisions with Logo/QR elements and ensures all content fits perfectly within the card's vertical bounds.
