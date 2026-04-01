@@ -1,8 +1,0 @@
-{
-  "track_id": "google_fonts_20260331",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-03-31T00:35:00Z",
-  "updated_at": "2026-03-31T00:35:00Z",
-  "description": "To make more attractive cards, allow the user to select and use the google font pairs (fetched from the CDN) as described in @fontpairs.md They should be stored persistently in Local Storage as well."
-}
