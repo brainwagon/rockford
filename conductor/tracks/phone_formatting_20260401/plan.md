@@ -1,9 +1,9 @@
 # Implementation Plan: Phone Number Formatting
 
 ## Phase 1: Logic & Unit Tests
-- [ ] Task: Create Phone Formatting Utility
-    - [ ] Write unit tests for `formatPhoneNumber(input)` in `tests/phone-utils.test.js`.
-    - [ ] Implement `formatPhoneNumber(input)` in `js/phone-utils.js`.
+- [x] Task: Create Phone Formatting Utility (8057409)
+    - [x] Write unit tests for `formatPhoneNumber(input)` in `tests/phone-utils.test.js`.
+    - [x] Implement `formatPhoneNumber(input)` in `js/phone-utils.js`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Logic & Unit Tests' (Protocol in workflow.md)
 
 ## Phase 2: UI Integration
