@@ -1,7 +1,7 @@
 # Implementation Plan: Build Core Business Card Generator MVP
 
 ## Phase 1: Project Scaffolding & Basic UI
-- [ ] Task: Setup Basic HTML/CSS Structure
+- [~] Task: Setup Basic HTML/CSS Structure
     - [ ] Write tests for initial DOM structure and base styles
     - [ ] Implement base HTML5 skeleton and Vanilla CSS reset/layout
 - [ ] Task: Template Selection Component
