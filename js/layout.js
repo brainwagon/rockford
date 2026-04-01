@@ -75,3 +75,11 @@ export function autoScaleElement(el, containerRect, avoidRects = [], minFontSize
         el.style.fontSize = `${currentFontSize}px`;
     }
 }
+
+/**
+ * Resets the font size of an element to its original template state.
+ * @param {HTMLElement} el 
+ */
+export function resetElementScaling(el) {
+    el.style.fontSize = '';
+}
