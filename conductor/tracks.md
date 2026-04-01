@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Optional Company Name**
+- [x] **Track: Optional Company Name**
   *Link: [./tracks/company_name_20260401/](./tracks/company_name_20260401/)*
