@@ -290,15 +290,20 @@ select {
 .card-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 100%;
-  padding: 20px;
+  height: 100%;
 }
 
-.card-text {
-  align-items: flex-start;
+.card-segment {
+  display: flex;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.card-column {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 #card-name-display {
@@ -323,15 +328,6 @@ select {
   font-size: 0.8rem;
   margin-bottom: 10px;
   white-space: nowrap;
-}
-
-.card-contact {
-  color: #444;
-  font-size: 0.75rem;
-}
-
-.card-contact p {
-  margin-bottom: 2px;
 }
 
 @media (max-width: 768px) {

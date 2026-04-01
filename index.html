@@ -26,11 +26,9 @@
         </div>
 
         <div class="control-group">
-          <h3>Template</h3>
-          <select id="template-select">
-            <option value="minimal">Minimalist Professional</option>
-            <option value="modern">Modern Creative</option>
-            <option value="elegant">Classic Elegant</option>
+          <h3>Layout</h3>
+          <select id="format-select">
+            <!-- Populated dynamically from formats/index.json -->
           </select>
         </div>
 
@@ -111,16 +109,14 @@
               <!-- QR Code will be displayed here -->
             </div>
             <div class="card-content">
-              <div class="card-text">
-                <h1 id="card-name-display">John Doe</h1>
-                <p id="card-title-display">Professional Title</p>
-                <p id="card-company-display"></p>
-              </div>
-              <div class="card-contact">
-                <p id="card-email-display"></p>
-                <p id="card-phone-display"></p>
-                <p id="card-website-display"></p>
-              </div>
+              <!-- Replaced by format renderer on load; placeholders ensure
+                   field IDs exist for structural tests and initial CSS. -->
+              <h1 id="card-name-display"></h1>
+              <p id="card-title-display"></p>
+              <p id="card-company-display"></p>
+              <p id="card-email-display"></p>
+              <p id="card-phone-display"></p>
+              <p id="card-website-display"></p>
             </div>
           </div>
         </div>

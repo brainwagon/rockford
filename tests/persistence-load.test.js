@@ -3,7 +3,6 @@ import {JSDOM} from 'jsdom';
 import fs from 'fs';
 import {fileURLToPath} from 'url';
 import {dirname, resolve} from 'path';
-import * as fonts from '../js/fonts.js';
 
 // Mock fonts to avoid hangs in JSDOM
 vi.mock('../js/fonts.js', async (importOriginal) => {
@@ -24,6 +23,7 @@ describe('State Restoration', () => {
   let dom;
   let document;
 
+  // Uses legacy 'template' key to exercise backward-compat mapping
   const mockState = {
     name: 'Restored Name',
     title: 'Restored Title',
@@ -36,14 +36,13 @@ describe('State Restoration', () => {
     fontPairId: 'montserrat_merriweather',
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dom = new JSDOM(html, {runScripts: 'dangerously', resources: 'usable'});
     document = dom.window.document;
 
     global.document = document;
     global.window = dom.window;
 
-    // Mock localStorage with predefined data
     const localStorageMock = (() => {
       let store = {
         'bmaker_state': JSON.stringify(mockState),
@@ -59,40 +58,28 @@ describe('State Restoration', () => {
       };
     })();
     global.localStorage = localStorageMock;
+
+    await initApp();
   });
 
-  it('should restore text fields from localStorage on init', async () => {
-    initApp();
-    // Wait for async loadFromLocalStorage
-    await new Promise((res) => setTimeout(res, 50));
-
+  it('should restore text fields from localStorage on init', () => {
     expect(document.getElementById('input-name').value).toBe(mockState.name);
     expect(document.getElementById('input-title').value).toBe(mockState.title);
     expect(document.getElementById('card-name-display').textContent).toBe(
         mockState.name);
   });
 
-  it('should restore UI state (template/orientation) on init', async () => {
-    initApp();
-    // Wait for async loadFromLocalStorage
-    await new Promise((res) => setTimeout(res, 50));
-
-    expect(document.getElementById('template-select').value).toBe(
-        mockState.template);
+  it('should restore UI state (format/orientation) on init', () => {
+    // Legacy 'template: modern' maps to modern.md → Theme class "modern"
     expect(document.getElementById('business-card').classList.contains(
         'modern')).toBe(true);
     expect(document.getElementById('business-card').classList.contains(
         'portrait')).toBe(true);
   });
 
-  it('should restore the font selection on init', async () => {
-    initApp();
-    // Wait for async loadFromLocalStorage
-    await new Promise((res) => setTimeout(res, 150)); // Font load might take longer
-
+  it('should restore the font selection on init', () => {
     expect(document.getElementById('font-select').value).toBe(
         mockState.fontPairId);
-    // Montserrat is 'Montserrat', sans-serif
     const headingFont = document.getElementById('business-card').style
         .getPropertyValue('--heading-font');
     expect(headingFont).toContain('Montserrat');
