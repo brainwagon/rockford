@@ -1,16 +1,16 @@
 # Implementation Plan: Sophisticated Layout Engine
 
-## Phase 1: Geometry & Collision Detection Core
+## Phase 1: Geometry & Collision Detection Core [checkpoint: 9ad4eb7]
 - [x] Task: Implement Bounding Box Utility (8c35d22)
     - [x] Write tests for calculating absolute bounding boxes of DOM elements
     - [x] Implement utility to get reliable coordinates for Card, Logo, QR, and Text elements
 - [x] Task: Implement Collision Detection Logic (8729d1e)
     - [x] Write tests for detecting intersection between two rectangles
     - [x] Implement `isOverlapping(el1, el2)` and `isOverflowing(child, parent)` functions
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Geometry & Collision Detection Core' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Geometry & Collision Detection Core' (Protocol in workflow.md)
 
 ## Phase 2: Auto-Scaling Engine
-- [ ] Task: Implement Iterative Reduction Algorithm
+- [~] Task: Implement Iterative Reduction Algorithm
     - [ ] Write tests for font-size reduction logic until fit is achieved
     - [ ] Implement the core scaling loop with min-size threshold (8px)
 - [ ] Task: Orientation and Template Awareness
