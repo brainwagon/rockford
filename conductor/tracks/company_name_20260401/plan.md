@@ -1,11 +1,11 @@
 # Implementation Plan: Optional Company Name
 
 ## Phase 1: UI Structure & Basic Logic
-- [ ] Task: Add Company Name Input & Display
-    - [ ] Write tests for the existence of the company name input and card elements.
-    - [ ] Add the "Company Name" input field (`#input-company`) to `index.html` in the contact section.
-    - [ ] Add the company name display element (`#card-company-display`) to `index.html` within the card structure.
-    - [ ] Define basic CSS for the company name element in `css/style.css`.
+- [x] Task: Add Company Name Input & Display (3669bb1)
+    - [x] Write tests for the existence of the company name input and card elements.
+    - [x] Add the "Company Name" input field (`#input-company`) to `index.html` in the contact section.
+    - [x] Add the company name display element (`#card-company-display`) to `index.html` within the card structure.
+    - [x] Define basic CSS for the company name element in `css/style.css`.
 - [ ] Task: Integrate Input with Card Preview
     - [ ] Write integration tests verifying that typing in the input updates the card preview.
     - [ ] Update the `initApp` function in `js/app.js` to include the company name input in the reactive text update loop.
