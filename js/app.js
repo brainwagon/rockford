@@ -143,9 +143,19 @@ export function initApp() {
 
     // Typography Logic
     if (fontSelect && businessCard) {
+        const cardContainer = document.getElementById('card-container');
         fontSelect.addEventListener('change', async (e) => {
             const selectedPair = e.target.value;
-            await injectGoogleFonts(selectedPair);
+            if (cardContainer && selectedPair !== 'default') {
+                cardContainer.classList.add('fonts-loading');
+            }
+            try {
+                await injectGoogleFonts(selectedPair);
+            } catch (err) {
+                console.warn('Font loading failed, falling back to system fonts:', err);
+            } finally {
+                if (cardContainer) cardContainer.classList.remove('fonts-loading');
+            }
             applyFontPair(selectedPair);
             runLayoutEngine(true);
             saveToLocalStorage();
@@ -308,7 +318,17 @@ export function initApp() {
 
             if (state.fontPairId) {
                 fontSelect.value = state.fontPairId;
-                await injectGoogleFonts(state.fontPairId);
+                const cardContainer = document.getElementById('card-container');
+                if (cardContainer && state.fontPairId !== 'default') {
+                    cardContainer.classList.add('fonts-loading');
+                }
+                try {
+                    await injectGoogleFonts(state.fontPairId);
+                } catch (err) {
+                    console.warn('Font loading failed during restoration:', err);
+                } finally {
+                    if (cardContainer) cardContainer.classList.remove('fonts-loading');
+                }
                 applyFontPair(state.fontPairId);
             }
 

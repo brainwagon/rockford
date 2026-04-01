@@ -25,9 +25,11 @@ describe('Font Selection Integration', () => {
           <option value="default">Default</option>
           <option value="montserrat_merriweather">Montserrat + Merriweather</option>
         </select>
-        <div id="business-card">
-          <h1 id="card-name-display"></h1>
-          <p id="card-title-display"></p>
+        <div id="card-container">
+          <div id="business-card">
+            <h1 id="card-name-display"></h1>
+            <p id="card-title-display"></p>
+          </div>
         </div>
         <!-- Other required elements for initApp -->
         <button id="btn-landscape"></button>
@@ -81,6 +83,25 @@ describe('Font Selection Integration', () => {
     
     await vi.waitFor(() => {
         expect(fonts.applyFontPair).toHaveBeenCalledWith('montserrat_merriweather');
+    });
+  });
+
+  it('should manage fonts-loading class on card-container during font fetch', async () => {
+    let resolveFont;
+    const fontPromise = new Promise(res => { resolveFont = res; });
+    vi.mocked(fonts.injectGoogleFonts).mockReturnValue(fontPromise);
+    
+    const fontSelect = document.getElementById('font-select');
+    const cardContainer = document.getElementById('card-container');
+    
+    fontSelect.value = 'montserrat_merriweather';
+    fontSelect.dispatchEvent(new Event('change'));
+    
+    expect(cardContainer.classList.contains('fonts-loading')).toBe(true);
+    
+    resolveFont();
+    await vi.waitFor(() => {
+        expect(cardContainer.classList.contains('fonts-loading')).toBe(false);
     });
   });
 
