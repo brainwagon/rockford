@@ -1,7 +1,7 @@
 # Implementation Plan: Sophisticated Layout Engine
 
 ## Phase 1: Geometry & Collision Detection Core
-- [ ] Task: Implement Bounding Box Utility
+- [~] Task: Implement Bounding Box Utility
     - [ ] Write tests for calculating absolute bounding boxes of DOM elements
     - [ ] Implement utility to get reliable coordinates for Card, Logo, QR, and Text elements
 - [ ] Task: Implement Collision Detection Logic
