@@ -1,0 +1,8 @@
+{
+  "track_id": "layout_engine_20260331",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-03-31T23:45:00Z",
+  "updated_at": "2026-03-31T23:45:00Z",
+  "description": "The sizes of items can sometimes cause the layout to have overlapping regions (for instance, my long name, Mark VandeWettering, frequently overlaps with the logo). Can you add a more sophisticated layout engine so that font sizes are adjusted to keep items from overlapping, and all the items fit vertically on the card?"
+}
