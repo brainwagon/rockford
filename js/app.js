@@ -1,10 +1,12 @@
 import { getAbsoluteBoundingRect, autoScaleElement, resetElementScaling, isOverflowing } from './layout.js';
+import { injectGoogleFonts, applyFontPair } from './fonts.js';
 
 export function initApp() {
     const btnLandscape = document.getElementById('btn-landscape');
     const btnPortrait = document.getElementById('btn-portrait');
     const businessCard = document.getElementById('business-card');
     const templateSelect = document.getElementById('template-select');
+    const fontSelect = document.getElementById('font-select');
     const inputQrToggle = document.getElementById('input-qr-toggle');
     const cardQrDisplay = document.getElementById('card-qr-display');
     const inputWebsite = document.getElementById('input-website');
@@ -130,6 +132,17 @@ export function initApp() {
             const selectedTemplate = e.target.value;
             businessCard.classList.remove('minimal', 'modern', 'elegant');
             businessCard.classList.add(selectedTemplate);
+            runLayoutEngine(true);
+            saveToLocalStorage();
+        });
+    }
+
+    // Typography Logic
+    if (fontSelect && businessCard) {
+        fontSelect.addEventListener('change', (e) => {
+            const selectedPair = e.target.value;
+            injectGoogleFonts(selectedPair);
+            applyFontPair(selectedPair);
             runLayoutEngine(true);
             saveToLocalStorage();
         });

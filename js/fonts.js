@@ -96,3 +96,22 @@ export function injectGoogleFonts(pairId) {
     link.href = pair.googleFontsUrl;
     document.head.appendChild(link);
 }
+
+/**
+ * Applies the font pair to the business card preview.
+ * @param {string} pairId - The ID of the font pair to apply.
+ */
+export function applyFontPair(pairId) {
+    const businessCard = document.getElementById('business-card');
+    if (!businessCard) return;
+
+    if (pairId === 'default' || !FONT_PAIRS[pairId]) {
+        businessCard.style.removeProperty('--heading-font');
+        businessCard.style.removeProperty('--body-font');
+        return;
+    }
+
+    const pair = FONT_PAIRS[pairId];
+    businessCard.style.setProperty('--heading-font', pair.headingFont);
+    businessCard.style.setProperty('--body-font', pair.bodyFont);
+}

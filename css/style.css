@@ -134,6 +134,12 @@ select {
     transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, color 0.3s ease;
     overflow: hidden;
     position: relative;
+    /* Font Fallbacks */
+    font-family: var(--body-font, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+}
+
+#card-name-display, #card-title-display {
+    font-family: var(--heading-font, inherit);
 }
 
 .logo-container {
