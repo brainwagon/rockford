@@ -12,12 +12,38 @@
     </header>
     <main id="app">
         <section id="editor">
-            <!-- Controls for editing will go here -->
             <h2>Card Editor</h2>
+            
+            <div class="control-group">
+                <h3>Orientation</h3>
+                <div class="btn-group">
+                    <button id="btn-landscape" class="active">Landscape</button>
+                    <button id="btn-portrait">Portrait</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Template</h3>
+                <select id="template-select">
+                    <option value="minimal">Minimalist Professional</option>
+                    <option value="modern">Modern Creative</option>
+                    <option value="elegant">Classic Elegant</option>
+                </select>
+            </div>
         </section>
         <section id="preview">
-            <!-- Business card preview will go here -->
             <h2>Preview</h2>
+            <div id="card-container">
+                <div id="business-card" class="landscape minimal">
+                    <div class="card-content">
+                        <!-- Card elements will be dynamically updated -->
+                        <div class="card-text">
+                            <h1 id="card-name-display">John Doe</h1>
+                            <p id="card-title-display">Professional Title</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
     <script src="js/app.js" type="module"></script>

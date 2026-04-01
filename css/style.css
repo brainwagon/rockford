@@ -49,6 +49,93 @@ h2 {
     padding-bottom: 10px;
 }
 
+.control-group {
+    margin-bottom: 20px;
+}
+
+.control-group h3 {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    border: 1px solid var(--accent-color);
+    background: transparent;
+    color: var(--accent-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button.active, button:hover {
+    background: var(--accent-color);
+    color: #fff;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+#card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    background: #f9f9f9;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+#business-card {
+    background: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 3.5" x 2" at 96dpi (approx) */
+#business-card.landscape {
+    width: 336px;
+    height: 192px;
+}
+
+/* 2" x 3.5" at 96dpi (approx) */
+#business-card.portrait {
+    width: 192px;
+    height: 336px;
+}
+
+.card-content {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#card-name-display {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+#card-title-display {
+    font-size: 0.9rem;
+    color: #666;
+}
+
 @media (max-width: 768px) {
     #app {
         grid-template-columns: 1fr;
