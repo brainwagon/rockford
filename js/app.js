@@ -25,4 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
         businessCard.classList.remove('minimal', 'modern', 'elegant');
         businessCard.classList.add(selectedTemplate);
     });
+
+    // Text Customization Logic
+    const inputs = [
+        { id: 'input-name', displayId: 'card-name-display' },
+        { id: 'input-title', displayId: 'card-title-display' },
+        { id: 'input-email', displayId: 'card-email-display' },
+        { id: 'input-phone', displayId: 'card-phone-display' },
+        { id: 'input-website', displayId: 'card-website-display' }
+    ];
+
+    inputs.forEach(inputPair => {
+        const inputEl = document.getElementById(inputPair.id);
+        const displayEl = document.getElementById(inputPair.displayId);
+
+        if (inputEl && displayEl) {
+            inputEl.addEventListener('input', () => {
+                displayEl.textContent = inputEl.value;
+            });
+        }
+    });
 });
