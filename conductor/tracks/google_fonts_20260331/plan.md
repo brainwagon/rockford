@@ -1,10 +1,10 @@
 # Implementation Plan: Google Font Pairs Integration
 
 ## Phase 1: UI & Data Mapping
-- [~] Task: Map Font Pairs Data
-    - [ ] Create `js/fonts.js` containing the 10 font pair configurations (URLs and families).
-    - [ ] Write unit tests to verify data structure integrity.
-- [ ] Task: Font Selection Dropdown
+- [x] Task: Map Font Pairs Data (cf9353e)
+    - [x] Create `js/fonts.js` containing the 10 font pair configurations (URLs and families).
+    - [x] Write unit tests to verify data structure integrity.
+- [~] Task: Font Selection Dropdown
     - [ ] Write tests for the existence and population of the font dropdown.
     - [ ] Add the `<select>` element to `index.html` within the editor section.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: UI & Data Mapping' (Protocol in workflow.md)
