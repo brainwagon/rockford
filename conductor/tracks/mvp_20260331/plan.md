@@ -25,7 +25,7 @@
 - [x] Task: Export System (PNG & PDF) (f68912e)
     - [x] Write tests for export triggers and data conversion logic
     - [x] Implement PNG export and high-quality PDF generation
-- [~] Task: Print & Final Polish
-    - [ ] Write tests for browser print integration
-    - [ ] Implement direct print functionality and final UX refinements
+- [x] Task: Print & Final Polish (ecd24b5)
+    - [x] Write tests for browser print integration
+    - [x] Implement direct print functionality and final UX refinements
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Export & Polish' (Protocol in workflow.md)

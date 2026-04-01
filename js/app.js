@@ -136,8 +136,23 @@ export function initApp() {
     }
 
     const btnPrint = document.getElementById('btn-print');
-    if (btnPrint) {
+    const printSheet = document.getElementById('print-sheet');
+
+    if (btnPrint && printSheet) {
         btnPrint.addEventListener('click', () => {
+            // Clear previous clones
+            printSheet.innerHTML = '';
+            
+            // Clone the current card 10 times
+            for (let i = 0; i < 10; i++) {
+                const clone = businessCard.cloneNode(true);
+                clone.id = `print-card-${i}`;
+                clone.classList.add('print-card-clone');
+                // Ensure orientation matches for Avery standard (landscape usually)
+                // But we'll follow the user's chosen orientation
+                printSheet.appendChild(clone);
+            }
+            
             window.print();
         });
     }

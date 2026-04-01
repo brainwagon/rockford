@@ -210,19 +210,35 @@ select {
     body * {
         visibility: hidden;
     }
-    #business-card, #business-card * {
+    #print-sheet, #print-sheet * {
         visibility: visible;
     }
-    #business-card {
+    #print-sheet {
         position: absolute;
         left: 0;
         top: 0;
-        box-shadow: none;
-        border: 1px solid #eee;
+        width: 8.5in;
+        height: 11in;
+        display: grid;
+        grid-template-columns: 3.5in 3.5in;
+        grid-template-rows: repeat(5, 2in);
+        padding: 0.5in 0.75in;
+        gap: 0;
+        background: #fff;
     }
-    /* Set page size to card size to avoid extra margins */
+    .print-card-clone {
+        width: 3.5in !important;
+        height: 2in !important;
+        border: 0.1pt solid #eee; /* Very faint crop marks */
+        box-shadow: none !important;
+        margin: 0 !important;
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+    }
+    /* Set page size to US Letter */
     @page {
-        size: auto;
+        size: 8.5in 11in;
         margin: 0;
     }
 }
