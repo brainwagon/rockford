@@ -1,7 +1,7 @@
 # Implementation Plan: Local Storage Persistence
 
 ## Phase 1: Core Persistence Logic
-- [ ] Task: Implement Data Serialization & Storage
+- [~] Task: Implement Data Serialization & Storage
     - [ ] Write tests for state serialization to JSON
     - [ ] Implement debounced `localStorage` save function for text fields and UI state
 - [ ] Task: Implement State Restoration

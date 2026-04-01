@@ -156,6 +156,36 @@ export function initApp() {
             window.print();
         });
     }
+
+    // Persistence Logic
+    let saveTimeout;
+    const saveToLocalStorage = () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            const state = {
+                name: document.getElementById('input-name')?.value,
+                title: document.getElementById('input-title')?.value,
+                email: document.getElementById('input-email')?.value,
+                phone: document.getElementById('input-phone')?.value,
+                website: document.getElementById('input-website')?.value,
+                template: templateSelect?.value,
+                orientation: businessCard?.classList.contains('landscape') ? 'landscape' : 'portrait',
+                qrEnabled: inputQrToggle?.checked,
+                logo: cardLogoDisplay?.querySelector('img')?.src
+            };
+            localStorage.setItem('bmaker_state', JSON.stringify(state));
+        }, 500);
+    };
+
+    // Attach save listeners
+    document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('input', saveToLocalStorage);
+        el.addEventListener('change', saveToLocalStorage);
+    });
+
+    [btnLandscape, btnPortrait].forEach(btn => {
+        btn?.addEventListener('click', saveToLocalStorage);
+    });
 }
 
 // Auto-init if not in test environment
