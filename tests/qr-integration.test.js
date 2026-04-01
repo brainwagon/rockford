@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const html = fs.readFileSync(resolve(__dirname, '../index.html'), 'utf8');
-const js = fs.readFileSync(resolve(__dirname, '../js/app.js'), 'utf8');
+import { initApp } from '../js/app.js';
 
 describe('QR Code Integration', () => {
   let dom;
@@ -18,12 +18,17 @@ describe('QR Code Integration', () => {
     dom = new JSDOM(html, { runScripts: "dangerously", resources: "usable" });
     document = dom.window.document;
     
-    const scriptEl = document.createElement('script');
-    scriptEl.textContent = js;
-    document.body.appendChild(scriptEl);
+    global.document = document;
     
-    const event = new dom.window.Event('DOMContentLoaded');
-    document.dispatchEvent(event);
+    // Mock qrcode-generator for JSDOM
+    dom.window.qrcode = (typeNumber, errorCorrectionLevel) => ({
+      addData: vi.fn(),
+      make: vi.fn(),
+      createImgTag: vi.fn(() => '<img src="mock-qr">')
+    });
+    global.qrcode = dom.window.qrcode;
+
+    initApp();
   });
 
   it('should have a toggle for QR code generation', () => {

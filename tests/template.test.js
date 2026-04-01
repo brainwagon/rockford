@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 
 const html = fs.readFileSync(resolve(__dirname, '../index.html'), 'utf8');
 
-const js = fs.readFileSync(resolve(__dirname, '../js/app.js'), 'utf8');
+import { initApp } from '../js/app.js';
 
 describe('Template Selection Component', () => {
   let dom;
@@ -19,14 +19,10 @@ describe('Template Selection Component', () => {
     dom = new JSDOM(html, { runScripts: "dangerously", resources: "usable" });
     document = dom.window.document;
     
-    // Inject the script
-    const scriptEl = document.createElement('script');
-    scriptEl.textContent = js;
-    document.body.appendChild(scriptEl);
+    // Polyfill global document for app.js
+    global.document = document;
     
-    // Manually trigger DOMContentLoaded if needed or wait
-    const event = new dom.window.Event('DOMContentLoaded');
-    document.dispatchEvent(event);
+    initApp();
   });
 
   it('should have orientation selection buttons', () => {

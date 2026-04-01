@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const html = fs.readFileSync(resolve(__dirname, '../index.html'), 'utf8');
-const js = fs.readFileSync(resolve(__dirname, '../js/app.js'), 'utf8');
+import { initApp } from '../js/app.js';
 
 describe('Logo Upload & Placement', () => {
   let dom;
@@ -17,6 +17,8 @@ describe('Logo Upload & Placement', () => {
   beforeEach(() => {
     dom = new JSDOM(html, { runScripts: "dangerously", resources: "usable" });
     document = dom.window.document;
+    
+    global.document = document;
     
     // Polyfill FileReader if necessary for tests
     if (!dom.window.FileReader) {
@@ -28,14 +30,9 @@ describe('Logo Upload & Placement', () => {
             }
         };
     }
+    global.FileReader = dom.window.FileReader;
 
-    const scriptEl = document.createElement('script');
-    scriptEl.textContent = js;
-    document.body.appendChild(scriptEl);
-    
-    const event = new dom.window.Event('DOMContentLoaded');
-    document.dispatchEvent(event);
-    // console.log(document.getElementById('app').innerHTML);
+    initApp();
   });
 
   it('should have a file input for logo upload', () => {
