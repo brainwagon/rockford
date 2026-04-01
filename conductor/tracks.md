@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Build Core Business Card Generator MVP**
+- [x] **Track: Build Core Business Card Generator MVP**
   *Link: [./tracks/mvp_20260331/](./tracks/mvp_20260331/)*
