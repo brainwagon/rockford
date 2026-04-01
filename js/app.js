@@ -45,19 +45,31 @@ export function initApp() {
 
       const nameEl = document.getElementById('card-name-display');
       const titleEl = document.getElementById('card-title-display');
+      const companyEl = document.getElementById('card-company-display');
 
       // 1. Reset all scaling
       resetElementScaling(nameEl);
       resetElementScaling(titleEl);
+      resetElementScaling(companyEl);
 
       // 2. Resolve INDIVIDUAL collisions with Logo and QR
       const avoidRects = [];
       if (logoRect) avoidRects.push(logoRect);
       if (qrRect) avoidRects.push(qrRect);
 
-      if (avoidRects.length > 0) {
-        if (nameEl) autoScaleElement(nameEl, cardRect, avoidRects, false);
-        if (titleEl) autoScaleElement(titleEl, cardRect, avoidRects, false);
+      // Handle optional company visibility
+      if (companyEl) {
+        if (!document.getElementById('input-company')?.value) {
+          companyEl.style.display = 'none';
+        } else {
+          companyEl.style.display = 'inline-block';
+        }
+      }
+
+      if (nameEl) autoScaleElement(nameEl, cardRect, avoidRects, false);
+      if (titleEl) autoScaleElement(titleEl, cardRect, avoidRects, false);
+      if (companyEl && companyEl.style.display !== 'none') {
+        autoScaleElement(companyEl, cardRect, avoidRects, false);
       }
 
       // 3. Final Vertical Fit Pass
@@ -71,19 +83,21 @@ export function initApp() {
       };
 
       while (checkVerticalOverflow() && safetyCounter < 50) {
-        const styles = window.getComputedStyle(nameEl);
-        const currentNameSize = parseFloat(styles.fontSize);
-        const titleStyles = window.getComputedStyle(titleEl);
-        const currentTitleSize = parseFloat(titleStyles.fontSize);
+        const nameFontSize = parseFloat(window.getComputedStyle(nameEl).fontSize);
+        const titleFontSize = parseFloat(window.getComputedStyle(titleEl).fontSize);
+        const companyFontSize = parseFloat(window.getComputedStyle(companyEl).fontSize);
 
-        if (currentNameSize > 8) {
-          nameEl.style.fontSize = `${currentNameSize - 0.5}px`;
+        if (nameFontSize > 8) {
+          nameEl.style.fontSize = `${nameFontSize - 0.5}px`;
         }
-        if (currentTitleSize > 8) {
-          titleEl.style.fontSize = `${currentTitleSize - 0.5}px`;
+        if (titleFontSize > 8) {
+          titleEl.style.fontSize = `${titleFontSize - 0.5}px`;
+        }
+        if (companyFontSize > 8) {
+          companyEl.style.fontSize = `${companyFontSize - 0.5}px`;
         }
 
-        if (currentNameSize <= 8 && currentTitleSize <= 8) break;
+        if (nameFontSize <= 8 && titleFontSize <= 8 && companyFontSize <= 8) break;
         safetyCounter++;
       }
     };
