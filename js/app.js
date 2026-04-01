@@ -186,6 +186,76 @@ export function initApp() {
     [btnLandscape, btnPortrait].forEach(btn => {
         btn?.addEventListener('click', saveToLocalStorage);
     });
+
+    // Load Persistence Logic
+    const loadFromLocalStorage = () => {
+        const saved = localStorage.getItem('bmaker_state');
+        if (!saved) return;
+
+        try {
+            const state = JSON.parse(saved);
+            
+            // Restore Text Fields
+            if (state.name) document.getElementById('input-name').value = state.name;
+            if (state.title) document.getElementById('input-title').value = state.title;
+            if (state.email) document.getElementById('input-email').value = state.email;
+            if (state.phone) document.getElementById('input-phone').value = state.phone;
+            if (state.website) document.getElementById('input-website').value = state.website;
+
+            // Trigger sync for all inputs to update preview
+            inputs.forEach(inputPair => {
+                const inputEl = document.getElementById(inputPair.id);
+                const displayEl = document.getElementById(inputPair.displayId);
+                if (inputEl && displayEl) {
+                    displayEl.textContent = inputEl.value;
+                }
+            });
+
+            // Restore UI State (Template)
+            if (state.template) {
+                templateSelect.value = state.template;
+                businessCard.classList.remove('minimal', 'modern', 'elegant');
+                businessCard.classList.add(state.template);
+            }
+
+            // Restore UI State (Orientation)
+            if (state.orientation === 'portrait') {
+                businessCard.classList.remove('landscape');
+                businessCard.classList.add('portrait');
+                btnPortrait.classList.add('active');
+                btnLandscape.classList.remove('active');
+            } else if (state.orientation === 'landscape') {
+                businessCard.classList.remove('portrait');
+                businessCard.classList.add('landscape');
+                btnLandscape.classList.add('active');
+                btnPortrait.classList.remove('active');
+            }
+
+            // Restore Logo
+            if (state.logo) {
+                cardLogoDisplay.innerHTML = `<img src="${state.logo}" alt="Logo">`;
+            }
+
+            // Restore QR
+            if (state.qrEnabled) {
+                inputQrToggle.checked = true;
+                cardQrDisplay.classList.add('active');
+                // updateQRCode requires inputWebsite value
+                const website = document.getElementById('input-website').value || 'https://example.com';
+                if (typeof qrcode !== 'undefined') {
+                    const qr = qrcode(0, 'M');
+                    qr.addData(website);
+                    qr.make();
+                    cardQrDisplay.innerHTML = qr.createImgTag(4);
+                }
+            }
+
+        } catch (e) {
+            console.error('Failed to load state:', e);
+        }
+    };
+
+    loadFromLocalStorage();
 }
 
 // Auto-init if not in test environment
