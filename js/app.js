@@ -45,4 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Logo Upload Logic
+    const inputLogo = document.getElementById('input-logo');
+    const cardLogoDisplay = document.getElementById('card-logo-display');
+
+    if (inputLogo && cardLogoDisplay) {
+        inputLogo.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    cardLogoDisplay.innerHTML = `<img src="${event.target.result}" alt="Logo">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 });

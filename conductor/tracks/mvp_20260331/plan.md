@@ -10,10 +10,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Project Scaffolding & Basic UI' (Protocol in workflow.md)
 
 ## Phase 2: Card Editor & Customization
-- [~] Task: Text Customization System
-    - [ ] Write tests for real-time sync between inputs and card preview
-    - [ ] Implement live text editing for all professional fields
-- [ ] Task: Logo Upload & Placement
+- [x] Task: Text Customization System (943f311)
+    - [x] Write tests for real-time sync between inputs and card preview
+    - [x] Implement live text editing for all professional fields
+- [~] Task: Logo Upload & Placement
     - [ ] Write tests for client-side image loading and display
     - [ ] Implement logo upload and basic positioning
 - [ ] Task: QR Code Integration
