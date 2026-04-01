@@ -16,6 +16,7 @@ To provide a simple, elegant, and efficient way for individual professionals to 
 2. **Logo/Image Upload:** Integration for users to add their own brand logo or a personalized background image.
 3. **QR Code Generator:** Built-in tool to generate and place QR codes for personal websites, LinkedIn profiles, or digital contact info.
 4. **Interactive Editor:** A simple UI for real-time preview of the business card as users customize text and images.
+5. **Session Persistence:** Automatic saving of the editor state to local storage, ensuring user data and design choices are preserved between sessions.
 
 ## Export & Distribution
 - **PDF Export:** Generate high-quality, print-ready PDF documents.
