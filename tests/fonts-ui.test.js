@@ -1,8 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach } from 'vitest';
-import { FONT_PAIRS, applyFontPair } from '../js/fonts.js';
+import {describe, it, expect, beforeEach} from 'vitest';
+import {FONT_PAIRS, applyFontPair} from '../js/fonts.js';
 
 describe('applyFontPair', () => {
   beforeEach(() => {
@@ -21,9 +21,9 @@ describe('applyFontPair', () => {
     const pairId = 'montserrat_merriweather';
     const pair = FONT_PAIRS[pairId];
     const card = document.getElementById('business-card');
-    
+
     applyFontPair(pairId);
-    
+
     expect(card.style.getPropertyValue('--heading-font')).toBe(pair.headingFont);
     expect(card.style.getPropertyValue('--body-font')).toBe(pair.bodyFont);
   });
@@ -32,9 +32,9 @@ describe('applyFontPair', () => {
     const card = document.getElementById('business-card');
     card.style.setProperty('--heading-font', 'some-font');
     card.style.setProperty('--body-font', 'other-font');
-    
+
     applyFontPair('default');
-    
+
     expect(card.style.getPropertyValue('--heading-font')).toBe('');
     expect(card.style.getPropertyValue('--body-font')).toBe('');
   });

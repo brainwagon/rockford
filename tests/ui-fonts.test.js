@@ -1,16 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { JSDOM } from 'jsdom';
+import {describe, it, expect, beforeEach} from 'vitest';
+import {JSDOM} from 'jsdom';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
+import {fileURLToPath} from 'url';
+import {dirname, resolve} from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const html = fs.readFileSync(resolve(__dirname, '../index.html'), 'utf8');
-import { FONT_PAIRS } from '../js/fonts.js';
 
-describe('Font Selection UI', () => {
+describe('UI: Font Dropdown', () => {
   let dom;
   let document;
 
@@ -19,21 +18,32 @@ describe('Font Selection UI', () => {
     document = dom.window.document;
   });
 
-  it('should have a font selection dropdown with id "font-select"', () => {
-    const select = document.getElementById('font-select');
-    expect(select).not.toBeNull();
-    expect(select.tagName).toBe('SELECT');
+  it('should have a font selection dropdown with correct ID', () => {
+    const fontSelect = document.getElementById('font-select');
+    expect(fontSelect).not.toBeNull();
+    expect(fontSelect.tagName).toBe('SELECT');
   });
 
-  it('should be populated with 10 font pairs plus a default option', () => {
-    const select = document.getElementById('font-select');
-    // Default (1) + 10 pairs = 11 options
-    // Assuming we have a "Default System Fonts" option
-    expect(select.options.length).toBeGreaterThanOrEqual(10);
-    
-    const optionValues = Array.from(select.options).map(o => o.value);
-    Object.keys(FONT_PAIRS).forEach(id => {
-        expect(optionValues.includes(id)).toBe(true);
-    });
+  it('should contain "Default System Fonts" as the first option', () => {
+    const fontSelect = document.getElementById('font-select');
+    const firstOption = fontSelect.options[0];
+    expect(firstOption.value).toBe('default');
+    expect(firstOption.textContent).toBe('Default System Fonts');
+  });
+
+  it('should contain 10 professional font pairs', () => {
+    const fontSelect = document.getElementById('font-select');
+    // total options = 1 (default) + 10 (pairs) = 11
+    expect(fontSelect.options.length).toBe(11);
+  });
+
+  it('should have Montserrat + Merriweather as one of the options', () => {
+    const fontSelect = document.getElementById('font-select');
+    const options = Array.from(fontSelect.options);
+    const hasMontserrat = options.some((opt) =>
+      opt.value === 'montserrat_merriweather' &&
+      opt.textContent === 'Montserrat + Merriweather',
+    );
+    expect(hasMontserrat).toBe(true);
   });
 });

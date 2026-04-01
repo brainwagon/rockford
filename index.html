@@ -1,127 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Card Generator</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h1>Business Card Generator</h1>
+      <h1>Business Card Generator</h1>
     </header>
     <main id="app">
-        <section id="editor">
-            <h2>Card Editor</h2>
-            
-            <div class="control-group">
-                <h3>Orientation</h3>
-                <div class="btn-group">
-                    <button id="btn-landscape" class="active">Landscape</button>
-                    <button id="btn-portrait">Portrait</button>
-                </div>
-            </div>
+      <section id="editor">
+        <h2>Card Editor</h2>
 
-            <div class="control-group">
-                <h3>Template</h3>
-                <select id="template-select">
-                    <option value="minimal">Minimalist Professional</option>
-                    <option value="modern">Modern Creative</option>
-                    <option value="elegant">Classic Elegant</option>
-                </select>
-            </div>
+        <div class="control-group">
+          <h3>Orientation</h3>
+          <div class="btn-group">
+            <button id="btn-landscape" class="active">Landscape</button>
+            <button id="btn-portrait">Portrait</button>
+          </div>
+        </div>
 
-            <div class="control-group">
-                <h3>Typography</h3>
-                <select id="font-select">
-                    <option value="default">Default System Fonts</option>
-                    <option value="montserrat_merriweather">Montserrat + Merriweather</option>
-                    <option value="playfair_source">Playfair Display + Source Sans Pro</option>
-                    <option value="lora_lato">Lora + Lato</option>
-                    <option value="oswald_crimson">Oswald + Crimson Text</option>
-                    <option value="raleway_baskerville">Raleway + Libre Baskerville</option>
-                    <option value="poppins_spectral">Poppins + Spectral</option>
-                    <option value="bebas_opensans">Bebas Neue + Open Sans</option>
-                    <option value="cormorant_roboto">Cormorant Garamond + Roboto</option>
-                    <option value="cinzel_nunito">Cinzel + Nunito Sans</option>
-                    <option value="ebgaramond_worksans">EB Garamond + Work Sans</option>
-                </select>
-            </div>
+        <div class="control-group">
+          <h3>Template</h3>
+          <select id="template-select">
+            <option value="minimal">Minimalist Professional</option>
+            <option value="modern">Modern Creative</option>
+            <option value="elegant">Classic Elegant</option>
+          </select>
+        </div>
 
-            <div class="control-group">
-                <h3>Branding</h3>
-                <div class="input-group">
-                    <label for="input-logo">Upload Logo</label>
-                    <input type="file" id="input-logo" accept="image/*">
-                </div>
-                <div class="input-group-inline">
-                    <input type="checkbox" id="input-qr-toggle">
-                    <label for="input-qr-toggle">Include QR Code</label>
-                </div>
-            </div>
+        <div class="control-group">
+          <h3>Typography</h3>
+          <select id="font-select">
+            <option value="default">Default System Fonts</option>
+            <option value="montserrat_merriweather">Montserrat + Merriweather</option>
+            <option value="playfair_source">Playfair Display + Source Sans Pro</option>
+            <option value="lora_lato">Lora + Lato</option>
+            <option value="oswald_crimson">Oswald + Crimson Text</option>
+            <option value="raleway_baskerville">Raleway + Libre Baskerville</option>
+            <option value="poppins_spectral">Poppins + Spectral</option>
+            <option value="bebas_opensans">Bebas Neue + Open Sans</option>
+            <option value="cormorant_roboto">Cormorant Garamond + Roboto</option>
+            <option value="cinzel_nunito">Cinzel + Nunito Sans</option>
+            <option value="ebgaramond_worksans">EB Garamond + Work Sans</option>
+          </select>
+        </div>
 
-            <div class="control-group">
-                <h3>Contact Information</h3>
-                <div class="input-group">
-                    <label for="input-name">Full Name</label>
-                    <input type="text" id="input-name" placeholder="e.g. John Doe" value="John Doe">
-                </div>
-                <div class="input-group">
-                    <label for="input-title">Professional Title</label>
-                    <input type="text" id="input-title" placeholder="e.g. Senior Consultant" value="Professional Title">
-                </div>
-                <div class="input-group">
-                    <label for="input-email">Email Address</label>
-                    <input type="email" id="input-email" placeholder="e.g. john@example.com">
-                </div>
-                <div class="input-group">
-                    <label for="input-phone">Phone Number</label>
-                    <input type="tel" id="input-phone" placeholder="e.g. +1 (555) 000-0000">
-                </div>
-                <div class="input-group">
-                    <label for="input-website">Website / Portfolio</label>
-                    <input type="url" id="input-website" placeholder="e.g. www.johndoe.com">
-                </div>
-            </div>
+        <div class="control-group">
+          <h3>Branding</h3>
+          <div class="input-group">
+            <label for="input-logo">Upload Logo</label>
+            <input type="file" id="input-logo" accept="image/*">
+          </div>
+          <div class="input-group-inline">
+            <input type="checkbox" id="input-qr-toggle">
+            <label for="input-qr-toggle">Include QR Code</label>
+          </div>
+        </div>
 
-            <div class="control-group">
-                <h3>Export</h3>
-                <div class="btn-group">
-                    <button id="btn-export-png">Export PNG</button>
-                    <button id="btn-export-pdf">Export PDF</button>
-                    <button id="btn-print">Print</button>
-                </div>
+        <div class="control-group">
+          <h3>Contact Information</h3>
+          <div class="input-group">
+            <label for="input-name">Full Name</label>
+            <input type="text" id="input-name" placeholder="e.g. John Doe" value="John Doe">
+          </div>
+          <div class="input-group">
+            <label for="input-title">Professional Title</label>
+            <input type="text" id="input-title" placeholder="e.g. Senior Consultant" value="Professional Title">
+          </div>
+          <div class="input-group">
+            <label for="input-email">Email Address</label>
+            <input type="email" id="input-email" placeholder="e.g. john@example.com">
+          </div>
+          <div class="input-group">
+            <label for="input-phone">Phone Number</label>
+            <input type="tel" id="input-phone" placeholder="e.g. +1 (555) 000-0000">
+          </div>
+          <div class="input-group">
+            <label for="input-website">Website / Portfolio</label>
+            <input type="url" id="input-website" placeholder="e.g. www.johndoe.com">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h3>Export</h3>
+          <div class="btn-group">
+            <button id="btn-export-png">Export PNG</button>
+            <button id="btn-export-pdf">Export PDF</button>
+            <button id="btn-print">Print</button>
+          </div>
+        </div>
+      </section>
+      <section id="preview">
+        <h2>Preview</h2>
+        <div id="card-container">
+          <div id="business-card" class="landscape minimal">
+            <div id="card-logo-display" class="logo-container">
+              <!-- Logo will be displayed here -->
             </div>
-        </section>
-        <section id="preview">
-            <h2>Preview</h2>
-            <div id="card-container">
-                <div id="business-card" class="landscape minimal">
-                    <div id="card-logo-display" class="logo-container">
-                        <!-- Logo will be displayed here -->
-                    </div>
-                    <div id="card-qr-display" class="qr-container">
-                        <!-- QR Code will be displayed here -->
-                    </div>
-                    <div class="card-content">
-                        <div class="card-text">
-                            <h1 id="card-name-display">John Doe</h1>
-                            <p id="card-title-display">Professional Title</p>
-                        </div>
-                        <div class="card-contact">
-                            <p id="card-email-display"></p>
-                            <p id="card-phone-display"></p>
-                            <p id="card-website-display"></p>
-                        </div>
-                    </div>
-                </div>
+            <div id="card-qr-display" class="qr-container">
+              <!-- QR Code will be displayed here -->
             </div>
-        </section>
+            <div class="card-content">
+              <div class="card-text">
+                <h1 id="card-name-display">John Doe</h1>
+                <p id="card-title-display">Professional Title</p>
+              </div>
+              <div class="card-contact">
+                <p id="card-email-display"></p>
+                <p id="card-phone-display"></p>
+                <p id="card-website-display"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
     <div id="print-sheet"></div>
     <script src="js/app.js" type="module"></script>
-</body>
+  </body>
 </html>
