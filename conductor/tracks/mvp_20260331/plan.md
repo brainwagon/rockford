@@ -4,9 +4,9 @@
 - [x] Task: Setup Basic HTML/CSS Structure (033a83b)
     - [x] Write tests for initial DOM structure and base styles
     - [x] Implement base HTML5 skeleton and Vanilla CSS reset/layout
-- [~] Task: Template Selection Component
-    - [ ] Write tests for template switching logic
-    - [ ] Implement UI for selecting between landscape and portrait templates
+- [x] Task: Template Selection Component (103a4e0)
+    - [x] Write tests for template switching logic
+    - [x] Implement UI for selecting between landscape and portrait templates
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Project Scaffolding & Basic UI' (Protocol in workflow.md)
 
 ## Phase 2: Card Editor & Customization
