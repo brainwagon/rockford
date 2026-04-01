@@ -4,9 +4,9 @@
 - [x] Task: Implement Bounding Box Utility (8c35d22)
     - [x] Write tests for calculating absolute bounding boxes of DOM elements
     - [x] Implement utility to get reliable coordinates for Card, Logo, QR, and Text elements
-- [~] Task: Implement Collision Detection Logic
-    - [ ] Write tests for detecting intersection between two rectangles
-    - [ ] Implement `isOverlapping(el1, el2)` and `isOverflowing(child, parent)` functions
+- [x] Task: Implement Collision Detection Logic (8729d1e)
+    - [x] Write tests for detecting intersection between two rectangles
+    - [x] Implement `isOverlapping(el1, el2)` and `isOverflowing(child, parent)` functions
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Geometry & Collision Detection Core' (Protocol in workflow.md)
 
 ## Phase 2: Auto-Scaling Engine
