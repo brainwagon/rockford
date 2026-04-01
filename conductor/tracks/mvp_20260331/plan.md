@@ -9,7 +9,7 @@
     - [x] Implement UI for selecting between landscape and portrait templates
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Project Scaffolding & Basic UI' (Protocol in workflow.md)
 
-## Phase 2: Card Editor & Customization
+## Phase 2: Card Editor & Customization [checkpoint: 6aa0fe5]
 - [x] Task: Text Customization System (943f311)
     - [x] Write tests for real-time sync between inputs and card preview
     - [x] Implement live text editing for all professional fields
@@ -19,10 +19,10 @@
 - [x] Task: QR Code Integration (96d1ea4)
     - [x] Write tests for QR code data encoding and rendering
     - [x] Integrate vanilla JS QR generator and add to card layout
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Card Editor & Customization' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Card Editor & Customization' (Protocol in workflow.md)
 
 ## Phase 3: Export & Polish
-- [ ] Task: Export System (PNG & PDF)
+- [~] Task: Export System (PNG & PDF)
     - [ ] Write tests for export triggers and data conversion logic
     - [ ] Implement PNG export and high-quality PDF generation
 - [ ] Task: Print & Final Polish
