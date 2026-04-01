@@ -205,6 +205,48 @@ export function initApp() {
         });
     }
 
+    // Export Logic
+    const btnExportPng = document.getElementById('btn-export-png');
+    const btnExportPdf = document.getElementById('btn-export-pdf');
+
+    if (btnExportPng) {
+        btnExportPng.addEventListener('click', () => {
+            if (typeof html2canvas === 'undefined') {
+                console.error('html2canvas not loaded');
+                return;
+            }
+            html2canvas(businessCard, { scale: 3 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `business-card-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+    }
+
+    if (btnExportPdf) {
+        btnExportPdf.addEventListener('click', () => {
+            if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                console.error('Export libraries not loaded');
+                return;
+            }
+            html2canvas(businessCard, { scale: 3 }).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const orientation = businessCard.classList.contains('landscape') ? 'l' : 'p';
+                // 3.5 x 2 inches in points (72 points per inch)
+                const doc = new jsPDF({
+                    orientation: orientation,
+                    unit: 'in',
+                    format: orientation === 'l' ? [3.5, 2] : [2, 3.5]
+                });
+                
+                const imgData = canvas.toDataURL('image/png');
+                doc.addImage(imgData, 'PNG', 0, 0, orientation === 'l' ? 3.5 : 2, orientation === 'l' ? 2 : 3.5);
+                doc.save(`business-card-${Date.now()}.pdf`);
+            });
+        });
+    }
+
     const btnPrint = document.getElementById('btn-print');
     const printSheet = document.getElementById('print-sheet');
 
