@@ -1,4 +1,4 @@
-import { getAbsoluteBoundingRect, autoScaleElement, resetElementScaling } from './layout.js';
+import { getAbsoluteBoundingRect, autoScaleElement, resetElementScaling, isOverflowing } from './layout.js';
 
 export function initApp() {
     const btnLandscape = document.getElementById('btn-landscape');
@@ -11,39 +11,76 @@ export function initApp() {
     const inputLogo = document.getElementById('input-logo');
     const cardLogoDisplay = document.getElementById('card-logo-display');
 
-    let layoutTimeout;
-    const runLayoutEngine = () => {
-        clearTimeout(layoutTimeout);
-        layoutTimeout = setTimeout(() => {
+    const runLayoutEngine = (immediate = false) => {
+        const performLayout = () => {
             if (!businessCard) return;
             
-            const containerRect = getAbsoluteBoundingRect(businessCard);
-            const avoidRects = [];
+            const cardRect = getAbsoluteBoundingRect(businessCard);
             
-            if (cardLogoDisplay) avoidRects.push(getAbsoluteBoundingRect(cardLogoDisplay));
-            if (cardQrDisplay && cardQrDisplay.classList.contains('active')) {
-                avoidRects.push(getAbsoluteBoundingRect(cardQrDisplay));
+            // Only avoid Logo if an image is actually present
+            const logoImg = cardLogoDisplay?.querySelector('img');
+            const logoRect = logoImg ? getAbsoluteBoundingRect(cardLogoDisplay) : null;
+            
+            // Only avoid QR if it is active
+            const qrRect = (cardQrDisplay && cardQrDisplay.classList.contains('active')) 
+                ? getAbsoluteBoundingRect(cardQrDisplay) 
+                : null;
+
+            const nameEl = document.getElementById('card-name-display');
+            const titleEl = document.getElementById('card-title-display');
+
+            // 1. Reset all scaling
+            resetElementScaling(nameEl);
+            resetElementScaling(titleEl);
+
+            // 2. Resolve INDIVIDUAL collisions with Logo and QR
+            const avoidRects = [];
+            if (logoRect) avoidRects.push(logoRect);
+            if (qrRect) avoidRects.push(qrRect);
+
+            if (avoidRects.length > 0) {
+                if (nameEl) autoScaleElement(nameEl, cardRect, avoidRects, false); 
+                if (titleEl) autoScaleElement(titleEl, cardRect, avoidRects, false);
             }
 
-            const elementsToScale = [
-                document.getElementById('card-name-display'),
-                document.getElementById('card-title-display')
-            ];
+            // 3. Final Vertical Fit Pass
+            // Check if the total content height exceeds the card height
+            const cardContent = document.querySelector('.card-content');
+            let safetyCounter = 0;
+            
+            // We use scrollHeight to see if content is bigger than the card height (100%)
+            const checkVerticalOverflow = () => {
+                const contentRect = getAbsoluteBoundingRect(cardContent);
+                // Allow a tiny 1px buffer for rounding
+                return contentRect.height > cardRect.height + 1;
+            };
 
-            elementsToScale.forEach(el => {
-                if (el) {
-                    resetElementScaling(el);
-                    autoScaleElement(el, containerRect, avoidRects);
-                }
-            });
-        }, 50); // Small debounce for stability
+            while (checkVerticalOverflow() && safetyCounter < 50) {
+                const currentNameSize = parseFloat(window.getComputedStyle(nameEl).fontSize);
+                const currentTitleSize = parseFloat(window.getComputedStyle(titleEl).fontSize);
+                
+                if (currentNameSize > 8) nameEl.style.fontSize = `${currentNameSize - 0.5}px`;
+                if (currentTitleSize > 8) titleEl.style.fontSize = `${currentTitleSize - 0.5}px`;
+                
+                if (currentNameSize <= 8 && currentTitleSize <= 8) break;
+                safetyCounter++;
+            }
+        };
+
+        clearTimeout(layoutTimeout);
+        if (immediate) {
+            performLayout();
+        } else {
+            layoutTimeout = setTimeout(performLayout, 50);
+        }
     };
 
     // Persistence Logic (moved up for scope)
+    let layoutTimeout;
     let saveTimeout;
     const saveToLocalStorage = (immediate = false) => {
         const performSave = () => {
-            runLayoutEngine();
+            runLayoutEngine(true);
             const state = {
                 name: document.getElementById('input-name')?.value,
                 title: document.getElementById('input-title')?.value,
@@ -73,7 +110,7 @@ export function initApp() {
             businessCard.classList.add('landscape');
             btnLandscape.classList.add('active');
             btnPortrait.classList.remove('active');
-            runLayoutEngine();
+            runLayoutEngine(true);
             saveToLocalStorage();
         });
 
@@ -82,7 +119,7 @@ export function initApp() {
             businessCard.classList.add('portrait');
             btnPortrait.classList.add('active');
             btnLandscape.classList.remove('active');
-            runLayoutEngine();
+            runLayoutEngine(true);
             saveToLocalStorage();
         });
     }
@@ -93,7 +130,7 @@ export function initApp() {
             const selectedTemplate = e.target.value;
             businessCard.classList.remove('minimal', 'modern', 'elegant');
             businessCard.classList.add(selectedTemplate);
-            runLayoutEngine();
+            runLayoutEngine(true);
             saveToLocalStorage();
         });
     }
@@ -128,7 +165,7 @@ export function initApp() {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     cardLogoDisplay.innerHTML = `<img src="${event.target.result}" alt="Logo">`;
-                    runLayoutEngine();
+                    runLayoutEngine(true);
                     saveToLocalStorage(true);
                 };
                 reader.readAsDataURL(file);
@@ -154,7 +191,7 @@ export function initApp() {
             } else {
                 cardQrDisplay.classList.remove('active');
             }
-            runLayoutEngine();
+            runLayoutEngine(true);
             saveToLocalStorage();
         });
     }
@@ -226,8 +263,6 @@ export function initApp() {
                 cardLogoDisplay.innerHTML = `<img src="${state.logo}" alt="Logo">`;
             }
 
-            runLayoutEngine();
-
             if (state.qrEnabled) {
                 inputQrToggle.checked = true;
                 cardQrDisplay.classList.add('active');
@@ -238,8 +273,11 @@ export function initApp() {
                     qr.make();
                     cardQrDisplay.innerHTML = qr.createImgTag(4);
                 }
-                runLayoutEngine();
             }
+
+            // Run layout engine after a short delay to ensure DOM is ready
+            setTimeout(() => runLayoutEngine(true), 100);
+
         } catch (e) {
             console.error('Failed to load state:', e);
         }
