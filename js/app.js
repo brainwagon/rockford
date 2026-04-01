@@ -1,3 +1,5 @@
+import { getAbsoluteBoundingRect, autoScaleElement, resetElementScaling } from './layout.js';
+
 export function initApp() {
     const btnLandscape = document.getElementById('btn-landscape');
     const btnPortrait = document.getElementById('btn-portrait');
@@ -9,10 +11,35 @@ export function initApp() {
     const inputLogo = document.getElementById('input-logo');
     const cardLogoDisplay = document.getElementById('card-logo-display');
 
+    const runLayoutEngine = () => {
+        if (!businessCard) return;
+        
+        const containerRect = getAbsoluteBoundingRect(businessCard);
+        const avoidRects = [];
+        
+        if (cardLogoDisplay) avoidRects.push(getAbsoluteBoundingRect(cardLogoDisplay));
+        if (cardQrDisplay && cardQrDisplay.classList.contains('active')) {
+            avoidRects.push(getAbsoluteBoundingRect(cardQrDisplay));
+        }
+
+        const elementsToScale = [
+            document.getElementById('card-name-display'),
+            document.getElementById('card-title-display')
+        ];
+
+        elementsToScale.forEach(el => {
+            if (el) {
+                resetElementScaling(el);
+                autoScaleElement(el, containerRect, avoidRects);
+            }
+        });
+    };
+
     // Persistence Logic (moved up for scope)
     let saveTimeout;
     const saveToLocalStorage = (immediate = false) => {
         const performSave = () => {
+            runLayoutEngine();
             const state = {
                 name: document.getElementById('input-name')?.value,
                 title: document.getElementById('input-title')?.value,
@@ -42,6 +69,7 @@ export function initApp() {
             businessCard.classList.add('landscape');
             btnLandscape.classList.add('active');
             btnPortrait.classList.remove('active');
+            runLayoutEngine();
             saveToLocalStorage();
         });
 
@@ -50,6 +78,7 @@ export function initApp() {
             businessCard.classList.add('portrait');
             btnPortrait.classList.add('active');
             btnLandscape.classList.remove('active');
+            runLayoutEngine();
             saveToLocalStorage();
         });
     }
@@ -60,6 +89,7 @@ export function initApp() {
             const selectedTemplate = e.target.value;
             businessCard.classList.remove('minimal', 'modern', 'elegant');
             businessCard.classList.add(selectedTemplate);
+            runLayoutEngine();
             saveToLocalStorage();
         });
     }
@@ -80,6 +110,7 @@ export function initApp() {
         if (inputEl && displayEl) {
             inputEl.addEventListener('input', () => {
                 displayEl.textContent = inputEl.value;
+                runLayoutEngine();
                 saveToLocalStorage();
             });
         }
@@ -89,13 +120,12 @@ export function initApp() {
     if (inputLogo && cardLogoDisplay) {
         inputLogo.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            // console.log('File changed:', file?.name);
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    // console.log('FileReader loaded');
                     cardLogoDisplay.innerHTML = `<img src="${event.target.result}" alt="Logo">`;
-                    saveToLocalStorage(true); // Immediate save for logo
+                    runLayoutEngine();
+                    saveToLocalStorage(true);
                 };
                 reader.readAsDataURL(file);
             }
@@ -120,6 +150,7 @@ export function initApp() {
             } else {
                 cardQrDisplay.classList.remove('active');
             }
+            runLayoutEngine();
             saveToLocalStorage();
         });
     }
@@ -128,6 +159,7 @@ export function initApp() {
         inputWebsite.addEventListener('input', () => {
             if (inputQrToggle.checked) {
                 updateQRCode();
+                runLayoutEngine();
             }
         });
     }
@@ -190,6 +222,8 @@ export function initApp() {
                 cardLogoDisplay.innerHTML = `<img src="${state.logo}" alt="Logo">`;
             }
 
+            runLayoutEngine();
+
             if (state.qrEnabled) {
                 inputQrToggle.checked = true;
                 cardQrDisplay.classList.add('active');
@@ -200,6 +234,7 @@ export function initApp() {
                     qr.make();
                     cardQrDisplay.innerHTML = qr.createImgTag(4);
                 }
+                runLayoutEngine();
             }
         } catch (e) {
             console.error('Failed to load state:', e);
