@@ -60,5 +60,4 @@
 - **Items**:
   - **VPad**:
   - **QRCode**:
-    - **Size**: "50px"
-  - **VPad**:
+    - **Size**: "62.5px"
