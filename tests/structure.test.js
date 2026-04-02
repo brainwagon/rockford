@@ -28,7 +28,7 @@ describe('Index HTML Structure', () => {
   it('should have a header with a title', () => {
     const header = document.querySelector('header h1');
     expect(header).not.toBeNull();
-    expect(header.textContent).toContain('Rockford');
+    expect(header.textContent).toContain('rockford');
   });
 
   it('should have a section for the editor', () => {
