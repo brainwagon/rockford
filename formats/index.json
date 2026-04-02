@@ -1,5 +1,6 @@
 [
   { "id": "minimal", "name": "Minimalist Professional", "file": "minimal.md" },
   { "id": "modern",  "name": "Modern Creative",          "file": "modern.md"  },
-  { "id": "elegant", "name": "Classic Elegant",           "file": "elegant.md" }
+  { "id": "elegant",    "name": "Classic Elegant",           "file": "elegant.md"    },
+  { "id": "corporate", "name": "Corporate",                 "file": "corporate.md"  }
 ]
