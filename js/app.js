@@ -1,8 +1,4 @@
-import {
-  getAbsoluteBoundingRect,
-  autoScaleElement,
-  resetElementScaling,
-} from './layout.js';
+import {getAbsoluteBoundingRect} from './layout.js';
 import {injectGoogleFonts, applyFontPair} from './fonts.js';
 import {formatPhoneNumber} from './phone-utils.js';
 import {parseFormat} from './format-parser.js';
@@ -10,7 +6,8 @@ import {renderCard} from './format-renderer.js';
 
 /**
  * Minimal inline format used for synchronous initial render before any
- * async format file is loaded. Ensures card elements always exist in DOM.
+ * async format file is loaded. Ensures card elements always exist in DOM,
+ * including a Logo item so logo can be restored from localStorage immediately.
  */
 const FALLBACK_FORMAT_MD = `# Business Card Template
 - **Version**: "1.0"
@@ -21,7 +18,6 @@ const FALLBACK_FORMAT_MD = `# Business Card Template
 - **FontPair**: "default"
 - **BackgroundColor**: "#FFFFFF"
 - **Border**: "none"
-- **QRCode**: "false"
 
 ## Segment: Identity
 - **Height**: "55%"
@@ -42,11 +38,11 @@ const FALLBACK_FORMAT_MD = `# Business Card Template
 
 ## Segment: Contact
 - **Height**: "45%"
-- **Columns**: "1"
+- **Columns**: "2"
 - **Padding**: "0px 20px 20px 20px"
 
 ### Column 1
-- **Width**: "100%"
+- **Width**: "70%"
 - **Alignment**: "left"
 - **Items**:
   - **Field**: Email
@@ -55,6 +51,14 @@ const FALLBACK_FORMAT_MD = `# Business Card Template
     - **Size**: "9pt"
   - **Field**: Website
     - **Size**: "9pt"
+
+### Column 2
+- **Width**: "30%"
+- **Alignment**: "right"
+- **Items**:
+  - **VPad**:
+  - **Logo**:
+    - **Size**: "40px"
 `;
 const FALLBACK_FORMAT = parseFormat(FALLBACK_FORMAT_MD);
 
@@ -67,16 +71,20 @@ export async function initApp() {
   const businessCard = document.getElementById('business-card');
   const formatSelect = document.getElementById('format-select');
   const fontSelect = document.getElementById('font-select');
-  const inputQrToggle = document.getElementById('input-qr-toggle');
-  const cardQrDisplay = document.getElementById('card-qr-display');
   const inputWebsite = document.getElementById('input-website');
   const inputLogo = document.getElementById('input-logo');
-  const cardLogoDisplay = document.getElementById('card-logo-display');
 
   /** Currently active parsed format object. */
   let currentFormat = null;
+  let currentFormatFile = null;
+  let currentFormatText = null;
+  let currentFormatModified = null;
+  let formatWatcherInterval = null;
   let layoutTimeout;
   let saveTimeout;
+
+  /** Logo image data URL; populated on upload and restored from localStorage. */
+  let currentLogoSrc = '';
 
   // Synchronous initial render: ensures card field elements exist in DOM
   // immediately, so event-driven tests don't need to await initApp().
@@ -98,13 +106,8 @@ export async function initApp() {
       if (!businessCard) return;
 
       const cardRect = getAbsoluteBoundingRect(businessCard);
-
-      const logoImg = cardLogoDisplay?.querySelector('img');
-      const logoRect = logoImg ? getAbsoluteBoundingRect(cardLogoDisplay) : null;
-
-      const qrRect = (cardQrDisplay &&
-          cardQrDisplay.classList.contains('active')) ?
-          getAbsoluteBoundingRect(cardQrDisplay) : null;
+      // Skip layout in zero-dimension environments (e.g. JSDOM in tests).
+      if (cardRect.width === 0) return;
 
       const nameEl = document.getElementById('card-name-display');
       const titleEl = document.getElementById('card-title-display');
@@ -112,46 +115,10 @@ export async function initApp() {
 
       if (!nameEl || !titleEl || !companyEl) return;
 
-      resetElementScaling(nameEl);
-      resetElementScaling(titleEl);
-      resetElementScaling(companyEl);
-
-      const avoidRects = [];
-      if (logoRect) avoidRects.push(logoRect);
-      if (qrRect) avoidRects.push(qrRect);
-
       if (!document.getElementById('input-company')?.value) {
         companyEl.style.display = 'none';
       } else {
         companyEl.style.display = 'inline-block';
-      }
-
-      autoScaleElement(nameEl, cardRect, avoidRects, false);
-      autoScaleElement(titleEl, cardRect, avoidRects, false);
-      if (companyEl.style.display !== 'none') {
-        autoScaleElement(companyEl, cardRect, avoidRects, false);
-      }
-
-      // Final vertical fit pass
-      const cardContent = document.querySelector('.card-content');
-      let safetyCounter = 0;
-
-      const checkVerticalOverflow = () => {
-        const contentRect = getAbsoluteBoundingRect(cardContent);
-        return contentRect.height > cardRect.height + 1;
-      };
-
-      while (checkVerticalOverflow() && safetyCounter < 50) {
-        const nameFontSize = parseFloat(window.getComputedStyle(nameEl).fontSize);
-        const titleFontSize = parseFloat(window.getComputedStyle(titleEl).fontSize);
-        const companyFontSize = parseFloat(window.getComputedStyle(companyEl).fontSize);
-
-        if (nameFontSize > 8) nameEl.style.fontSize = `${nameFontSize - 0.5}px`;
-        if (titleFontSize > 8) titleEl.style.fontSize = `${titleFontSize - 0.5}px`;
-        if (companyFontSize > 8) companyEl.style.fontSize = `${companyFontSize - 0.5}px`;
-
-        if (nameFontSize <= 8 && titleFontSize <= 8 && companyFontSize <= 8) break;
-        safetyCounter++;
       }
     };
 
@@ -201,7 +168,7 @@ export async function initApp() {
     Email: document.getElementById('input-email')?.value || '',
     Phone: document.getElementById('input-phone')?.value || '',
     Website: document.getElementById('input-website')?.value || '',
-    Logo: cardLogoDisplay?.querySelector('img')?.src || '',
+    Logo: currentLogoSrc,
   });
 
   // ------------------------------------------------------------------
@@ -236,13 +203,60 @@ export async function initApp() {
     try {
       const res = await fetch(`./formats/${filename}`);
       const text = await res.text();
+      currentFormatFile = filename;
+      currentFormatText = text;
+      currentFormatModified = res.headers.get('Last-Modified');
       currentFormat = parseFormat(text);
       renderCard(businessCard, currentFormat, collectData());
+      updateQRCode();
       await loadAndApplyFont(currentFormat.metadata.fontPair);
       runLayoutEngine(true);
+      startFormatWatcher(filename);
     } catch (err) {
       console.warn(`Could not load format file "${filename}":`, err);
     }
+  };
+
+  /**
+   * Polls the current format file every 2 seconds. Uses a HEAD request to
+   * check Last-Modified; only fetches the full file and re-renders when the
+   * modification time has changed. Falls back to content comparison when the
+   * server does not provide a Last-Modified header.
+   * @param {string} filename
+   */
+  const startFormatWatcher = (filename) => {
+    if (formatWatcherInterval) clearInterval(formatWatcherInterval);
+    formatWatcherInterval = setInterval(async () => {
+      if (currentFormatFile !== filename) return;
+      try {
+        const headRes = await fetch(
+            `./formats/${filename}`, {method: 'HEAD', cache: 'no-store'});
+        const modified = headRes.headers.get('Last-Modified');
+
+        console.log(`[watcher] "${filename}" — Last-Modified: ${modified}` +
+            ` (stored: ${currentFormatModified})`);
+
+        // If the server provides Last-Modified and it hasn't changed, skip.
+        if (modified !== null && modified === currentFormatModified) return;
+
+        const res = await fetch(`./formats/${filename}`, {cache: 'no-store'});
+        const text = await res.text();
+        const newModified = res.headers.get('Last-Modified');
+
+        // When no Last-Modified is available, fall back to content comparison.
+        if (modified === null && text === currentFormatText) return;
+
+        console.log(`[watcher] "${filename}" modified — reloading format.`);
+        currentFormatText = text;
+        currentFormatModified = newModified ?? modified;
+        currentFormat = parseFormat(text);
+        renderCard(businessCard, currentFormat, collectData());
+        updateQRCode();
+        runLayoutEngine(true);
+      } catch (err) {
+        console.warn(`Format watcher error for "${filename}":`, err);
+      }
+    }, 2000);
   };
 
   // ------------------------------------------------------------------
@@ -267,8 +281,7 @@ export async function initApp() {
         fontPairId: fontSelect?.value,
         orientation: businessCard?.classList.contains('landscape') ?
             'landscape' : 'portrait',
-        qrEnabled: inputQrToggle?.checked,
-        logo: cardLogoDisplay?.querySelector('img')?.src,
+        logo: currentLogoSrc || undefined,
       };
       localStorage.setItem('bmaker_state', JSON.stringify(state));
     };
@@ -368,13 +381,17 @@ export async function initApp() {
   // Logo upload
   // ------------------------------------------------------------------
 
-  if (inputLogo && cardLogoDisplay) {
+  if (inputLogo) {
     inputLogo.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
-          cardLogoDisplay.innerHTML = `<img src="${event.target.result}" alt="Logo">`;
+          currentLogoSrc = event.target.result;
+          if (businessCard && currentFormat) {
+            renderCard(businessCard, currentFormat, collectData());
+            updateQRCode();
+          }
           runLayoutEngine(true);
           saveToLocalStorage(true);
         };
@@ -389,36 +406,29 @@ export async function initApp() {
 
   /**
    * Regenerates the QR code image from the current website value.
+   * Shows or hides #card-qr-display based on whether a URL is present.
    */
   function updateQRCode() {
-    const website = inputWebsite.value || 'https://example.com';
+    const qrEl = document.getElementById('card-qr-display');
+    if (!qrEl) return;
+    const website = inputWebsite?.value || '';
+    if (!website) {
+      qrEl.style.display = 'none';
+      return;
+    }
+    qrEl.style.display = '';
     if (typeof qrcode !== 'undefined') {
       const qr = qrcode(0, 'M');
       qr.addData(website);
       qr.make();
-      cardQrDisplay.innerHTML = qr.createImgTag(4);
+      qrEl.innerHTML = qr.createImgTag(4);
     }
-  }
-
-  if (inputQrToggle && cardQrDisplay) {
-    inputQrToggle.addEventListener('change', () => {
-      if (inputQrToggle.checked) {
-        cardQrDisplay.classList.add('active');
-        updateQRCode();
-      } else {
-        cardQrDisplay.classList.remove('active');
-      }
-      runLayoutEngine(true);
-      saveToLocalStorage();
-    });
   }
 
   if (inputWebsite) {
     inputWebsite.addEventListener('input', () => {
-      if (inputQrToggle.checked) {
-        updateQRCode();
-        runLayoutEngine();
-      }
+      updateQRCode();
+      runLayoutEngine();
     });
   }
 
@@ -502,7 +512,7 @@ export async function initApp() {
       const displayEl = document.getElementById(inputPair.displayId);
       if (inputEl && displayEl) {
         displayEl.textContent = inputEl.value;
-        if (!inputEl.value) displayEl.style.display = 'none';
+        displayEl.style.display = inputEl.value ? '' : 'none';
       }
     });
 
@@ -536,8 +546,9 @@ export async function initApp() {
     if (raw) savedState = JSON.parse(raw);
   } catch (e) { /* ignore */ }
 
-  // 2. Restore synchronous DOM state immediately (no async needed).
-  //    These tests check these values right after initApp() returns.
+  // 2. Restore synchronous state immediately (no async needed).
+  //    currentLogoSrc must be set before the initial render so the logo
+  //    appears in the FALLBACK_FORMAT's Logo item synchronously.
   if (savedState) {
     if (savedState.orientation === 'portrait') {
       businessCard?.classList.remove('landscape');
@@ -545,13 +556,14 @@ export async function initApp() {
       btnPortrait?.classList.add('active');
       btnLandscape?.classList.remove('active');
     }
-    if (savedState.logo && cardLogoDisplay) {
-      cardLogoDisplay.innerHTML = `<img src="${savedState.logo}" alt="Logo">`;
+    if (savedState.logo) {
+      currentLogoSrc = savedState.logo;
     }
-    if (savedState.qrEnabled && inputQrToggle && cardQrDisplay) {
-      inputQrToggle.checked = true;
-      cardQrDisplay.classList.add('active');
-    }
+  }
+
+  // Re-render the fallback format now that currentLogoSrc is set.
+  if (businessCard) {
+    renderCard(businessCard, FALLBACK_FORMAT, collectData());
   }
 
   // 3. Populate format selector from manifest (async)
@@ -582,17 +594,6 @@ export async function initApp() {
     restoreDataValues(savedState);
     if (savedState.fontPairId) {
       await loadAndApplyFont(savedState.fontPairId);
-    }
-    // Regenerate QR image now that website value has been restored
-    if (savedState.qrEnabled && inputQrToggle?.checked) {
-      const website = document.getElementById('input-website')?.value ||
-          'https://example.com';
-      if (typeof qrcode !== 'undefined') {
-        const qr = qrcode(0, 'M');
-        qr.addData(website);
-        qr.make();
-        cardQrDisplay.innerHTML = qr.createImgTag(4);
-      }
     }
   }
 

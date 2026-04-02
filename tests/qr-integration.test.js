@@ -14,55 +14,58 @@ describe('QR Code Integration', () => {
   let dom;
   let document;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dom = new JSDOM(html, { runScripts: "dangerously", resources: "usable" });
     document = dom.window.document;
-    
+
     global.document = document;
     global.window = dom.window;
 
-    // Polyfill localStorage
     const localStorageMock = (() => {
       let store = {};
       return {
         getItem: vi.fn(key => store[key] || null),
-        setItem: vi.fn((key, value) => {
-          store[key] = value.toString();
-        }),
-        clear: vi.fn(() => {
-          store = {};
-        })
+        setItem: vi.fn((key, value) => { store[key] = value.toString(); }),
+        clear: vi.fn(() => { store = {}; }),
       };
     })();
     global.localStorage = localStorageMock;
-    
+
     // Mock qrcode-generator for JSDOM
-    dom.window.qrcode = (typeNumber, errorCorrectionLevel) => ({
+    global.qrcode = () => ({
       addData: vi.fn(),
       make: vi.fn(),
-      createImgTag: vi.fn(() => '<img src="mock-qr">')
+      createImgTag: vi.fn(() => '<img src="mock-qr">'),
     });
-    global.qrcode = dom.window.qrcode;
 
-    initApp();
+    await initApp();
+
+    // Switch to modern format which includes a QRCode item
+    const formatSelect = document.getElementById('format-select');
+    formatSelect.value = 'modern.md';
+    formatSelect.dispatchEvent(new dom.window.Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 100));
   });
 
-  it('should have a toggle for QR code generation', () => {
-    expect(document.getElementById('input-qr-toggle')).not.toBeNull();
-  });
-
-  it('should have a QR code display element on the card', () => {
+  it('should have a QR code display element on the card when format includes one', () => {
     expect(document.getElementById('card-qr-display')).not.toBeNull();
   });
 
-  it('should show the QR code when toggled on', () => {
-    const toggle = document.getElementById('input-qr-toggle');
-    const display = document.getElementById('card-qr-display');
-    
-    toggle.checked = true;
-    toggle.dispatchEvent(new dom.window.Event('change'));
-    
-    // In TDD Red phase, we check if the element exists
-    expect(display).toBeDefined();
+  it('should show the QR element when Website URL is provided', () => {
+    const websiteInput = document.getElementById('input-website');
+    websiteInput.value = 'https://example.com';
+    websiteInput.dispatchEvent(new dom.window.Event('input'));
+
+    const qrEl = document.getElementById('card-qr-display');
+    expect(qrEl.style.display).not.toBe('none');
+  });
+
+  it('should hide the QR element when Website URL is empty', () => {
+    const websiteInput = document.getElementById('input-website');
+    websiteInput.value = '';
+    websiteInput.dispatchEvent(new dom.window.Event('input'));
+
+    const qrEl = document.getElementById('card-qr-display');
+    expect(qrEl.style.display).toBe('none');
   });
 });

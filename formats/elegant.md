@@ -7,11 +7,7 @@
 - **FontPair**: "default"
 - **BackgroundColor**: "#FFFFFF"
 - **Border**: "1px solid #D4AF37"
-- **QRCode**: "false"
-
-<!-- Theme "elegant" applies: Georgia serif fallback font, 5px inner inset border on
-     card-content, and a gold underline on Name. These are controlled by CSS and are
-     not expressible as format-level properties. -->
+- **LineHeight**: "1.4"
 
 ## Segment: Identity
 - **Height**: "55%"
@@ -22,6 +18,7 @@
 - **Width**: "100%"
 - **Alignment**: "left"
 - **Items**:
+  - **VPad**:
   - **Field**: Name
     - **Size**: "18pt"
     - **Style**: "italic"
@@ -29,6 +26,7 @@
     - **Size**: "11pt"
   - **Field**: Company
     - **Size**: "10pt"
+  - **VPad**:
 
 ## Segment: Contact
 - **Height**: "45%"
@@ -39,6 +37,7 @@
 - **Width**: "100%"
 - **Alignment**: "left"
 - **Items**:
+  - **VPad**:
   - **Field**: Email
     - **Size**: "9pt"
   - **Field**: Phone

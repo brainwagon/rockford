@@ -107,22 +107,12 @@ const TWO_COL_MD = `# Business Card Template
     - **Size**: "9pt"
 `;
 
-/** Build a minimal #business-card DOM element with logo/QR overlays */
+/** Build a minimal #business-card DOM element */
 function makeCard(dom) {
   const doc = dom.window.document;
   const card = doc.createElement('div');
   card.id = 'business-card';
   card.className = 'landscape minimal';
-
-  const logo = doc.createElement('div');
-  logo.id = 'card-logo-display';
-  logo.className = 'logo-container';
-  card.appendChild(logo);
-
-  const qr = doc.createElement('div');
-  qr.id = 'card-qr-display';
-  qr.className = 'qr-container';
-  card.appendChild(qr);
 
   const content = doc.createElement('div');
   content.className = 'card-content';
@@ -196,6 +186,24 @@ describe('renderCard — card-level styles', () => {
     renderCard(card, parseFormat(ELEGANT_MD), {});
     // jsdom normalizes hex color within border shorthand
     expect(card.style.border).toBe('1px solid rgb(212, 175, 55)');
+  });
+
+  it('sets --card-line-height CSS custom property when LineHeight is present', () => {
+    const MD_WITH_LH = MINIMAL_MD.replace(
+        '- **Border**: "none"',
+        '- **Border**: "none"\n- **LineHeight**: "1.4"');
+    renderCard(card, parseFormat(MD_WITH_LH), {});
+    expect(card.style.getPropertyValue('--card-line-height')).toBe('1.4');
+  });
+
+  it('removes --card-line-height when LineHeight is absent', () => {
+    // First render with a line height, then re-render without one
+    const MD_WITH_LH = MINIMAL_MD.replace(
+        '- **Border**: "none"',
+        '- **Border**: "none"\n- **LineHeight**: "1.4"');
+    renderCard(card, parseFormat(MD_WITH_LH), {});
+    renderCard(card, parseFormat(MINIMAL_MD), {});
+    expect(card.style.getPropertyValue('--card-line-height')).toBe('');
   });
 });
 
@@ -359,9 +367,36 @@ describe('renderCard — field elements', () => {
   });
 });
 
-describe('renderCard — overlay preservation', () => {
+describe('renderCard — VSpace items', () => {
   let dom;
   let card;
+
+  const VSPACE_MD = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+- **QRCode**: "false"
+
+## Segment: Identity
+- **Height**: "100%"
+- **Columns**: "1"
+- **Padding**: "20px"
+
+### Column 1
+- **Width**: "100%"
+- **Alignment**: "left"
+- **Items**:
+  - **Field**: Name
+    - **Size**: "18pt"
+  - **VSpace**: "12px"
+  - **Field**: Title
+    - **Size**: "11pt"
+`;
 
   beforeEach(() => {
     dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
@@ -369,14 +404,150 @@ describe('renderCard — overlay preservation', () => {
     card = makeCard(dom);
   });
 
-  it('does not remove #card-logo-display', () => {
-    renderCard(card, parseFormat(MINIMAL_MD), {});
+  it('renders a .card-vspace element for VSpace items', () => {
+    renderCard(card, parseFormat(VSPACE_MD), {Name: 'A', Title: 'B'});
+    expect(card.querySelector('.card-vspace')).not.toBeNull();
+  });
+
+  it('sets height style from VSpace size', () => {
+    renderCard(card, parseFormat(VSPACE_MD), {Name: 'A', Title: 'B'});
+    expect(card.querySelector('.card-vspace').style.height).toBe('12px');
+  });
+
+  it('places VSpace between Name and Title in DOM order', () => {
+    renderCard(card, parseFormat(VSPACE_MD), {Name: 'A', Title: 'B'});
+    const col = card.querySelector('.card-column');
+    const children = Array.from(col.children);
+    const nameIdx = children.findIndex((el) => el.id === 'card-name-display');
+    const spaceIdx = children.findIndex((el) => el.classList.contains('card-vspace'));
+    const titleIdx = children.findIndex((el) => el.id === 'card-title-display');
+    expect(spaceIdx).toBe(nameIdx + 1);
+    expect(titleIdx).toBe(spaceIdx + 1);
+  });
+});
+
+describe('renderCard — VPad items', () => {
+  let dom;
+  let card;
+
+  const VPAD_MD = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+- **QRCode**: "false"
+
+## Segment: Identity
+- **Height**: "100%"
+- **Columns**: "1"
+- **Padding**: "20px"
+
+### Column 1
+- **Width**: "100%"
+- **Alignment**: "left"
+- **Items**:
+  - **Field**: Name
+    - **Size**: "18pt"
+  - **VPad**:
+  - **Field**: Title
+    - **Size**: "11pt"
+  - **VPad**:
+`;
+
+  beforeEach(() => {
+    dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+    global.document = dom.window.document;
+    card = makeCard(dom);
+  });
+
+  it('renders a .card-vpad element for each VPad item', () => {
+    renderCard(card, parseFormat(VPAD_MD), {Name: 'A', Title: 'B'});
+    expect(card.querySelectorAll('.card-vpad')).toHaveLength(2);
+  });
+
+  it('VPad element has no inline height', () => {
+    renderCard(card, parseFormat(VPAD_MD), {Name: 'A', Title: 'B'});
+    const pads = card.querySelectorAll('.card-vpad');
+    pads.forEach((el) => expect(el.style.height).toBe(''));
+  });
+
+  it('places VPad elements between Name and Title in DOM order', () => {
+    renderCard(card, parseFormat(VPAD_MD), {Name: 'A', Title: 'B'});
+    const col = card.querySelector('.card-column');
+    const children = Array.from(col.children);
+    const nameIdx = children.findIndex((el) => el.id === 'card-name-display');
+    const padIdx = children.findIndex((el) => el.classList.contains('card-vpad'));
+    const titleIdx = children.findIndex((el) => el.id === 'card-title-display');
+    expect(padIdx).toBe(nameIdx + 1);
+    expect(titleIdx).toBe(padIdx + 1);
+  });
+});
+
+describe('renderCard — Logo items', () => {
+  let dom;
+  let card;
+
+  const LOGO_MD = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+
+## Segment: Identity
+- **Height**: "100%"
+- **Columns**: "2"
+
+### Column 1
+- **Width**: "70%"
+- **Alignment**: "left"
+- **Items**:
+  - **Field**: Name
+    - **Size**: "18pt"
+
+### Column 2
+- **Width**: "30%"
+- **Alignment**: "right"
+- **Items**:
+  - **Logo**:
+    - **Size**: "50px"
+`;
+
+  beforeEach(() => {
+    dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+    global.document = dom.window.document;
+    card = makeCard(dom);
+  });
+
+  it('creates #card-logo-display when Logo item is present', () => {
+    renderCard(card, parseFormat(LOGO_MD), {Logo: 'data:image/png;base64,xxx'});
     expect(card.querySelector('#card-logo-display')).not.toBeNull();
   });
 
-  it('does not remove #card-qr-display', () => {
-    renderCard(card, parseFormat(MINIMAL_MD), {});
-    expect(card.querySelector('#card-qr-display')).not.toBeNull();
+  it('Logo element contains img with logo src', () => {
+    renderCard(card, parseFormat(LOGO_MD), {Logo: 'data:image/png;base64,xxx'});
+    const img = card.querySelector('#card-logo-display img');
+    expect(img).not.toBeNull();
+    expect(img.src).toContain('data:image/png;base64,xxx');
+  });
+
+  it('sets img dimensions from Logo Size', () => {
+    renderCard(card, parseFormat(LOGO_MD), {Logo: 'data:image/png;base64,xxx'});
+    const img = card.querySelector('#card-logo-display img');
+    expect(img.style.width).toBe('50px');
+    expect(img.style.height).toBe('50px');
+  });
+
+  it('hides Logo element when Logo data is absent', () => {
+    renderCard(card, parseFormat(LOGO_MD), {});
+    expect(card.querySelector('#card-logo-display').style.display).toBe('none');
   });
 
   it('re-renders cleanly when called twice', () => {
@@ -384,5 +555,57 @@ describe('renderCard — overlay preservation', () => {
     renderCard(card, parseFormat(MINIMAL_MD), {Name: 'Second'});
     expect(card.querySelector('#card-name-display').textContent).toBe('Second');
     expect(card.querySelectorAll('.card-segment')).toHaveLength(2);
+  });
+});
+
+describe('renderCard — QRCode items', () => {
+  let dom;
+  let card;
+
+  const QRCODE_MD = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+
+## Segment: Contact
+- **Height**: "100%"
+- **Columns**: "1"
+
+### Column 1
+- **Width**: "100%"
+- **Alignment**: "center"
+- **Items**:
+  - **Field**: Website
+    - **Size**: "9pt"
+  - **QRCode**:
+    - **Size**: "60px"
+`;
+
+  beforeEach(() => {
+    dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+    global.document = dom.window.document;
+    card = makeCard(dom);
+  });
+
+  it('creates #card-qr-display when QRCode item is present', () => {
+    renderCard(card, parseFormat(QRCODE_MD), {Website: 'https://example.com'});
+    expect(card.querySelector('#card-qr-display')).not.toBeNull();
+  });
+
+  it('sets QRCode element dimensions from Size', () => {
+    renderCard(card, parseFormat(QRCODE_MD), {Website: 'https://example.com'});
+    const qrEl = card.querySelector('#card-qr-display');
+    expect(qrEl.style.width).toBe('60px');
+    expect(qrEl.style.height).toBe('60px');
+  });
+
+  it('hides QRCode element when Website is absent', () => {
+    renderCard(card, parseFormat(QRCODE_MD), {});
+    expect(card.querySelector('#card-qr-display').style.display).toBe('none');
   });
 });

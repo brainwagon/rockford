@@ -15,21 +15,32 @@ const modernMd = fs.readFileSync(resolve(__dirname, '../formats/modern.md'), 'ut
 const elegantMd = fs.readFileSync(resolve(__dirname, '../formats/elegant.md'), 'utf8');
 const manifestJson = fs.readFileSync(resolve(__dirname, '../formats/index.json'), 'utf8');
 
+const noHeaders = {get: () => null};
+
 global.fetch = vi.fn((url) => {
   if (url.endsWith('index.json')) {
     return Promise.resolve({
-      ok: true,
+      ok: true, headers: noHeaders,
       json: () => Promise.resolve(JSON.parse(manifestJson)),
     });
   }
   if (url.endsWith('minimal.md')) {
-    return Promise.resolve({ok: true, text: () => Promise.resolve(minimalMd)});
+    return Promise.resolve({
+      ok: true, headers: noHeaders,
+      text: () => Promise.resolve(minimalMd),
+    });
   }
   if (url.endsWith('modern.md')) {
-    return Promise.resolve({ok: true, text: () => Promise.resolve(modernMd)});
+    return Promise.resolve({
+      ok: true, headers: noHeaders,
+      text: () => Promise.resolve(modernMd),
+    });
   }
   if (url.endsWith('elegant.md')) {
-    return Promise.resolve({ok: true, text: () => Promise.resolve(elegantMd)});
+    return Promise.resolve({
+      ok: true, headers: noHeaders,
+      text: () => Promise.resolve(elegantMd),
+    });
   }
-  return Promise.resolve({ok: false, text: () => Promise.resolve('')});
+  return Promise.resolve({ok: false, headers: noHeaders, text: () => Promise.resolve('')});
 });

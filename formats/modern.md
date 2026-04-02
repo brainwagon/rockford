@@ -5,43 +5,60 @@
 - **Orientation**: "landscape"
 - **Theme**: "modern"
 - **FontPair**: "default"
-- **BackgroundColor**: "#FDFBFB"
+- **BackgroundColor**: "#FFFFFF"
 - **Border**: "none"
-- **QRCode**: "false"
-
-<!-- Theme "modern" applies: linear-gradient background, 10px solid blue left border,
-     and uppercase letter-spacing on Name. These are controlled by CSS and are not
-     expressible as format-level properties. -->
+- **LineHeight**: "1.3"
 
 ## Segment: Identity
 - **Height**: "55%"
-- **Columns**: "1"
+- **Columns**: "2"
 - **Padding**: "20px 20px 0px 20px"
 
 ### Column 1
-- **Width**: "100%"
-- **Alignment**: "left"
+- **Width**: "70%"
+- **Alignment**: "center"
 - **Items**:
+  - **VPad**:
+  - **Field**: Company
+    - **Size**: "12pt"
   - **Field**: Name
-    - **Size**: "18pt"
+    - **Size**: "10pt"
     - **Style**: "bold"
   - **Field**: Title
-    - **Size**: "11pt"
-  - **Field**: Company
     - **Size**: "10pt"
+  - **VPad**:
+
+### Column 2
+- **Width**: "30%"
+- **Alignment**: "center"
+- **Items**:
+  - **VPad**:
+  - **Logo**:
+    - **Size**: "50px"
+  - **VPad**:
 
 ## Segment: Contact
 - **Height**: "45%"
-- **Columns**: "1"
+- **Columns**: "2"
 - **Padding**: "0px 20px 20px 20px"
 
 ### Column 1
-- **Width**: "100%"
+- **Width**: "70%"
 - **Alignment**: "left"
 - **Items**:
+  - **VPad**:
   - **Field**: Email
-    - **Size**: "9pt"
-  - **Field**: Phone
-    - **Size**: "9pt"
+    - **Size**: "8pt"
   - **Field**: Website
-    - **Size**: "9pt"
+    - **Size**: "8pt"
+  - **Field**: Phone
+    - **Size**: "8pt"
+
+### Column 2
+- **Width**: "30%"
+- **Alignment**: "center"
+- **Items**:
+  - **VPad**:
+  - **QRCode**:
+    - **Size**: "50px"
+  - **VPad**:

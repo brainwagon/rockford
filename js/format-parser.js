@@ -37,7 +37,7 @@ function applyMetadataProp(metadata, key, value) {
     case 'FontPair':       metadata.fontPair = value; break;
     case 'BackgroundColor': metadata.backgroundColor = value; break;
     case 'Border':         metadata.border = value; break;
-    case 'QRCode':         metadata.qrCode = value === 'true'; break;
+    case 'LineHeight':     metadata.lineHeight = value; break;
   }
 }
 
@@ -85,6 +85,45 @@ function parseItems(lines, i) {
 
     // Exit items block when we encounter a non-indented, non-empty line
     if (line.length > 0 && !line.startsWith(' ')) break;
+
+    // 2-space indent: VSpace declaration  e.g. - **VSpace**: "10px"
+    const vspaceMatch = line.match(/^ {2}-\s+\*\*VSpace\*\*:\s*(.+)/);
+    if (vspaceMatch) {
+      items.push({
+        field: 'VSpace',
+        size: stripQuotes(vspaceMatch[1].trim()),
+        style: 'normal',
+        alignment: null,
+      });
+      currentItem = null;
+      i++;
+      continue;
+    }
+
+    // 2-space indent: VPad declaration  e.g. - **VPad**:
+    // Expands to fill remaining column space; multiple VPads share it equally.
+    if (line.match(/^ {2}-\s+\*\*VPad\*\*:/)) {
+      items.push({field: 'VPad', size: null, style: 'normal', alignment: null});
+      currentItem = null;
+      i++;
+      continue;
+    }
+
+    // 2-space indent: Logo item
+    if (line.match(/^ {2}-\s+\*\*Logo\*\*:/)) {
+      currentItem = {field: 'Logo', size: null, style: 'normal', alignment: null};
+      items.push(currentItem);
+      i++;
+      continue;
+    }
+
+    // 2-space indent: QRCode item
+    if (line.match(/^ {2}-\s+\*\*QRCode\*\*:/)) {
+      currentItem = {field: 'QRCode', size: null, style: 'normal', alignment: null};
+      items.push(currentItem);
+      i++;
+      continue;
+    }
 
     // 2-space indent: Field declaration
     const fieldMatch = line.match(/^ {2}-\s+\*\*Field\*\*:\s*(.+)/);
@@ -137,7 +176,7 @@ export function parseFormat(markdown) {
       fontPair: 'default',
       backgroundColor: '#FFFFFF',
       border: 'none',
-      qrCode: false,
+      lineHeight: null,
     },
     segments: [],
   };

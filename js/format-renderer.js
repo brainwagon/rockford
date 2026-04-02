@@ -26,12 +26,64 @@ function tagForField(fieldName) {
 }
 
 /**
- * Creates a DOM element for a single field item.
- * @param {Object} item - parsed field item {field, size, style, alignment}
- * @param {string} value - data value for this field
+ * Creates a DOM element for a single column item.
+ * @param {Object} item - parsed item {field, size, style, alignment}
+ * @param {string} value - data value for this item's field key
+ * @param {Object} data - full data map (used by Logo and QRCode items)
  * @returns {HTMLElement}
  */
-function createFieldElement(item, value) {
+function createFieldElement(item, value, data) {
+  if (item.field === 'VSpace') {
+    const el = document.createElement('div');
+    el.className = 'card-vspace';
+    if (item.size) el.style.height = item.size;
+    return el;
+  }
+
+  if (item.field === 'VPad') {
+    const el = document.createElement('div');
+    el.className = 'card-vpad';
+    return el;
+  }
+
+  if (item.field === 'Logo') {
+    const el = document.createElement('div');
+    el.id = 'card-logo-display';
+    el.className = 'card-logo';
+    if (item.alignment) el.style.textAlign = item.alignment;
+    const src = data && data.Logo;
+    if (src) {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Logo';
+      img.style.objectFit = 'contain';
+      img.style.display = 'inline-block';
+      if (item.size) {
+        img.style.width = item.size;
+        img.style.height = item.size;
+      }
+      el.appendChild(img);
+    } else {
+      el.style.display = 'none';
+    }
+    return el;
+  }
+
+  if (item.field === 'QRCode') {
+    const el = document.createElement('div');
+    el.id = 'card-qr-display';
+    el.className = 'card-qrcode';
+    if (item.alignment) el.style.textAlign = item.alignment;
+    if (item.size) {
+      el.style.display = 'inline-block';
+      el.style.width = item.size;
+      el.style.height = item.size;
+    }
+    const website = data && data.Website;
+    if (!website) el.style.display = 'none';
+    return el;
+  }
+
   const el = document.createElement(tagForField(item.field));
 
   const id = FIELD_IDS[item.field];
@@ -40,7 +92,10 @@ function createFieldElement(item, value) {
 
   el.textContent = value || '';
 
-  if (item.size) el.style.fontSize = item.size;
+  if (item.size) {
+    el.style.fontSize = item.size;
+    el.dataset.baseFontSize = item.size;
+  }
 
   if (item.style && item.style !== 'normal') {
     if (item.style.includes('bold')) el.style.fontWeight = 'bold';
@@ -67,7 +122,7 @@ function createColumnElement(colDef, data) {
   if (colDef.alignment) colEl.style.textAlign = colDef.alignment;
 
   for (const item of colDef.items) {
-    colEl.appendChild(createFieldElement(item, data[item.field] || ''));
+    colEl.appendChild(createFieldElement(item, data[item.field] || '', data));
   }
 
   return colEl;
@@ -120,8 +175,13 @@ export function renderCard(cardElement, format, data) {
   } else {
     cardElement.style.removeProperty('border');
   }
+  if (metadata.lineHeight) {
+    cardElement.style.setProperty('--card-line-height', metadata.lineHeight);
+  } else {
+    cardElement.style.removeProperty('--card-line-height');
+  }
 
-  // 3. Rebuild .card-content (segments + columns + fields)
+  // 4. Rebuild .card-content (segments + columns + fields)
   let cardContent = cardElement.querySelector('.card-content');
   if (!cardContent) {
     cardContent = document.createElement('div');

@@ -148,16 +148,6 @@ describe('parseFormat — metadata', () => {
     expect(result.metadata.border).toBe('none');
   });
 
-  it('coerces QRCode "false" to boolean false', () => {
-    const result = parseFormat(MINIMAL_FORMAT);
-    expect(result.metadata.qrCode).toBe(false);
-  });
-
-  it('coerces QRCode "true" to boolean true', () => {
-    const result = parseFormat(TWO_COLUMN_FORMAT);
-    expect(result.metadata.qrCode).toBe(true);
-  });
-
   it('parses non-default fontPair', () => {
     const result = parseFormat(TWO_COLUMN_FORMAT);
     expect(result.metadata.fontPair).toBe('lora_lato');
@@ -171,6 +161,19 @@ describe('parseFormat — metadata', () => {
   it('parses border value with spaces', () => {
     const result = parseFormat(TWO_COLUMN_FORMAT);
     expect(result.metadata.border).toBe('1px solid #000000');
+  });
+
+  it('defaults lineHeight to null when absent', () => {
+    const result = parseFormat(MINIMAL_FORMAT);
+    expect(result.metadata.lineHeight).toBeNull();
+  });
+
+  it('parses lineHeight when present', () => {
+    const FORMAT_WITH_LH = MINIMAL_FORMAT.replace(
+        '- **Border**: "none"',
+        '- **Border**: "none"\n- **LineHeight**: "1.4"');
+    const result = parseFormat(FORMAT_WITH_LH);
+    expect(result.metadata.lineHeight).toBe('1.4');
   });
 });
 
@@ -296,6 +299,213 @@ describe('parseFormat — field items', () => {
     expect(contactItems[0].field).toBe('Email');
     expect(contactItems[1].field).toBe('Phone');
     expect(contactItems[2].field).toBe('Website');
+  });
+});
+
+describe('parseFormat — VSpace items', () => {
+  const VSPACE_FORMAT = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+- **QRCode**: "false"
+
+## Segment: Identity
+- **Height**: "100%"
+- **Columns**: "1"
+- **Padding**: "20px"
+
+### Column 1
+- **Width**: "100%"
+- **Alignment**: "left"
+- **Items**:
+  - **Field**: Name
+    - **Size**: "18pt"
+  - **VSpace**: "12px"
+  - **Field**: Title
+    - **Size**: "11pt"
+`;
+
+  it('parses VSpace as an item with field "VSpace"', () => {
+    const result = parseFormat(VSPACE_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items[1].field).toBe('VSpace');
+  });
+
+  it('parses VSpace size correctly', () => {
+    const result = parseFormat(VSPACE_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items[1].size).toBe('12px');
+  });
+
+  it('does not consume the following Field item', () => {
+    const result = parseFormat(VSPACE_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items[2].field).toBe('Title');
+    expect(items[2].size).toBe('11pt');
+  });
+
+  it('sets three items total (Name, VSpace, Title)', () => {
+    const result = parseFormat(VSPACE_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items).toHaveLength(3);
+  });
+});
+
+describe('parseFormat — VPad items', () => {
+  const VPAD_FORMAT = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+- **QRCode**: "false"
+
+## Segment: Identity
+- **Height**: "100%"
+- **Columns**: "1"
+- **Padding**: "20px"
+
+### Column 1
+- **Width**: "100%"
+- **Alignment**: "left"
+- **Items**:
+  - **Field**: Name
+    - **Size**: "18pt"
+  - **VPad**:
+  - **Field**: Title
+    - **Size**: "11pt"
+  - **VPad**:
+`;
+
+  it('parses VPad as an item with field "VPad"', () => {
+    const result = parseFormat(VPAD_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items[1].field).toBe('VPad');
+    expect(items[3].field).toBe('VPad');
+  });
+
+  it('VPad has null size', () => {
+    const result = parseFormat(VPAD_FORMAT);
+    expect(result.segments[0].columnDefs[0].items[1].size).toBeNull();
+  });
+
+  it('does not consume the following Field item', () => {
+    const result = parseFormat(VPAD_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items[2].field).toBe('Title');
+  });
+
+  it('parses four items total (Name, VPad, Title, VPad)', () => {
+    const result = parseFormat(VPAD_FORMAT);
+    expect(result.segments[0].columnDefs[0].items).toHaveLength(4);
+  });
+});
+
+describe('parseFormat — Logo items', () => {
+  const LOGO_FORMAT = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+
+## Segment: Identity
+- **Height**: "100%"
+- **Columns**: "2"
+
+### Column 1
+- **Width**: "70%"
+- **Alignment**: "left"
+- **Items**:
+  - **Field**: Name
+    - **Size**: "18pt"
+
+### Column 2
+- **Width**: "30%"
+- **Alignment**: "right"
+- **Items**:
+  - **Logo**:
+    - **Size**: "50px"
+    - **Alignment**: "center"
+`;
+
+  it('parses Logo as an item with field "Logo"', () => {
+    const result = parseFormat(LOGO_FORMAT);
+    const items = result.segments[0].columnDefs[1].items;
+    expect(items[0].field).toBe('Logo');
+  });
+
+  it('parses Logo size correctly', () => {
+    const result = parseFormat(LOGO_FORMAT);
+    expect(result.segments[0].columnDefs[1].items[0].size).toBe('50px');
+  });
+
+  it('parses Logo alignment override', () => {
+    const result = parseFormat(LOGO_FORMAT);
+    expect(result.segments[0].columnDefs[1].items[0].alignment).toBe('center');
+  });
+
+  it('does not consume the following column or item', () => {
+    const result = parseFormat(LOGO_FORMAT);
+    expect(result.segments[0].columnDefs[0].items[0].field).toBe('Name');
+  });
+});
+
+describe('parseFormat — QRCode items', () => {
+  const QRCODE_FORMAT = `# Business Card Template
+- **Version**: "1.0"
+- **TemplateName**: "Test"
+- **Dimensions**: "3.5in × 2.0in"
+- **Orientation**: "landscape"
+- **Theme**: "minimal"
+- **FontPair**: "default"
+- **BackgroundColor**: "#FFFFFF"
+- **Border**: "none"
+
+## Segment: Contact
+- **Height**: "100%"
+- **Columns**: "1"
+
+### Column 1
+- **Width**: "100%"
+- **Alignment**: "center"
+- **Items**:
+  - **Field**: Website
+    - **Size**: "9pt"
+  - **QRCode**:
+    - **Size**: "60px"
+`;
+
+  it('parses QRCode as an item with field "QRCode"', () => {
+    const result = parseFormat(QRCODE_FORMAT);
+    const items = result.segments[0].columnDefs[0].items;
+    expect(items[1].field).toBe('QRCode');
+  });
+
+  it('parses QRCode size correctly', () => {
+    const result = parseFormat(QRCODE_FORMAT);
+    expect(result.segments[0].columnDefs[0].items[1].size).toBe('60px');
+  });
+
+  it('does not consume the preceding Field item', () => {
+    const result = parseFormat(QRCODE_FORMAT);
+    expect(result.segments[0].columnDefs[0].items[0].field).toBe('Website');
+  });
+
+  it('QRCode alignment defaults to null when absent', () => {
+    const result = parseFormat(QRCODE_FORMAT);
+    expect(result.segments[0].columnDefs[0].items[1].alignment).toBeNull();
   });
 });
 
