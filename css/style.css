@@ -238,7 +238,7 @@ section {
 
 h2 {
   border-bottom: 2px solid rgba(0,0,0,0.1);
-  color: var(--color-marker-blue);
+  color: var(--color-ballpoint-blue);
   font-family: var(--font-informal-heading);
   margin-bottom: 20px;
   padding-bottom: 10px;
@@ -267,9 +267,9 @@ h2 {
 
 button {
   background: #fff;
-  border: 2px solid var(--color-marker-blue);
+  border: 2px solid var(--color-ballpoint-blue);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  color: var(--color-marker-blue);
+  color: var(--color-ballpoint-blue);
   cursor: pointer;
   font-family: var(--font-informal-labels);
   font-size: 1.1rem;
@@ -280,7 +280,7 @@ button {
 
 button.active,
 button:hover {
-  background: var(--color-marker-blue);
+  background: var(--color-ballpoint-blue);
   color: #fff;
   transform: rotate(1deg) scale(1.05);
 }
@@ -297,7 +297,7 @@ button.btn-danger:hover {
 
 select {
   background: #fff;
-  border: 2px solid var(--color-marker-blue);
+  border: 2px solid var(--color-ballpoint-blue);
   border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
   font-family: var(--font-informal-labels);
   font-size: 1.1rem;
@@ -369,7 +369,7 @@ button.btn-danger:hover {
 }
 
 .input-group label {
-  color: var(--color-marker-blue);
+  color: var(--color-ballpoint-blue);
   display: block;
   font-family: var(--font-informal-labels);
   font-size: 1rem;
@@ -377,7 +377,7 @@ button.btn-danger:hover {
 }
 
 .input-group input {
-  border: 2px solid var(--color-marker-blue);
+  border: 2px solid var(--color-ballpoint-blue);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   font-family: var(--font-informal-labels);
   font-size: 1.1rem;

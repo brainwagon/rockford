@@ -35,7 +35,6 @@ describe('Informal Theme Foundation', () => {
     expect(css).toContain('--font-informal-body: \'Indie Flower\', cursive;');
     expect(css).toContain('--font-informal-labels: \'Patrick Hand\', cursive;');
     
-    expect(css).toContain('--color-marker-blue: #2e5cb8;');
     expect(css).toContain('--color-ballpoint-blue: #1a3a6c;');
     expect(css).toContain('--color-felt-red: #d92b2b;');
     expect(css).toContain('--color-tape-yellow: #fdfd96;');
@@ -78,10 +77,10 @@ describe('Informal Theme Foundation', () => {
     expect(css).toContain('font-family: var(--font-informal-labels);');
     
     expect(css).toContain('select {');
-    expect(css).toContain('border: 2px solid var(--color-marker-blue);');
+    expect(css).toContain('border: 2px solid var(--color-ballpoint-blue);');
     
     expect(css).toContain('.input-group input {');
-    expect(css).toContain('border: 2px solid var(--color-marker-blue);');
+    expect(css).toContain('border: 2px solid var(--color-ballpoint-blue);');
   });
 
   it('should have decorative elements in index.html', () => {
