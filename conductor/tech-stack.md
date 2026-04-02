@@ -10,7 +10,7 @@
 ## Styling
 - **CSS Strategy:** **Vanilla CSS.** Standard CSS files for all UI and business card styling.
 - **Layout:** Modern CSS features like Flexbox and CSS Grid to handle card layouts and overall UI structure.
-- **Fonts:** System fonts for the UI, with specific Google Fonts or local font loads for the business card templates.
+- **Fonts:** Handwritten Google Fonts for the UI (e.g., Gloria Hallelujah, Indie Flower), with a variety of professional font loads for the business card templates.
 
 ## Assets & Icons
 - **Icons:** SVG icons (inline or linked) for the UI.

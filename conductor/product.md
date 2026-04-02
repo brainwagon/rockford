@@ -26,6 +26,6 @@ To provide a simple, elegant, and efficient way for individual professionals to 
 - **Direct Print:** Integrated browser printing for immediate card production.
 
 ## Aesthetic & UX Principles
-- **Style:** Classic & Elegant. The focus is on conservative, formal, and high-impact designs.
+- **Style:** Whimsical & Casual. The interface uses a "home-grown" scrapbook aesthetic with textured backgrounds and informal typography.
 - **UX:** Minimalist and intuitive. The path from template selection to final export should be frictionless.
 - **Speed:** Fast rendering and real-time feedback for a seamless design experience.

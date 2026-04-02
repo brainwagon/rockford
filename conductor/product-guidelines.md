@@ -6,7 +6,7 @@
 
 ## Design & UX Principles
 - **UX Strategy:** **Guided Discovery.** The interface should actively lead the user from template selection to final export. New features or customization options should be introduced naturally as the user progresses.
-- **Aesthetic:** **Trustworthy & Reliable.** Use a stable and cohesive color palette (e.g., deep blues, greys, and crisp whites) that communicates professional reliability.
+- **Aesthetic:** **Whimsical & Informal.** Uses a "scrapbook" aesthetic with textured backgrounds (paper, craft, cardboard), organic hand-drawn shapes, and an eclectic color palette.
 - **Feedback:** Provide subtle but clear feedback for user actions (e.g., highlighting selected text, animated transition when switching templates).
 
 ## Accessibility
@@ -16,4 +16,4 @@
 
 ## Branding
 - **Logo Usage:** The product's own branding should be subtle, allowing the user's custom business card designs to remain the primary focus.
-- **Typography:** Use clean, professional sans-serif fonts for the UI, while offering a variety of elegant font options for the business card templates.
+- **Typography:** Use informal, handwritten fonts for the UI, while offering a variety of professional font options for the business card templates.
