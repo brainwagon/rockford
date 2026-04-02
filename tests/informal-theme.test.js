@@ -36,11 +36,12 @@ describe('Informal Theme Foundation', () => {
     expect(css).toContain('--font-informal-labels: \'Patrick Hand\', cursive;');
     
     expect(css).toContain('--color-marker-blue: #2e5cb8;');
+    expect(css).toContain('--color-ballpoint-blue: #1a3a6c;');
     expect(css).toContain('--color-felt-red: #d92b2b;');
     expect(css).toContain('--color-tape-yellow: #fdfd96;');
     expect(css).toContain('--color-marker-green: #228b22;');
     expect(css).toContain('--color-craft-paper: #d2b48c;');
-    expect(css).toContain('--color-cardboard: #8b5a2b;');
+    expect(css).toContain('--color-cardboard: #b08d57;');
     expect(css).toContain('--color-pen-black: #1a1a1a;');
   });
 
