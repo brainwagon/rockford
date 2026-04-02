@@ -210,25 +210,41 @@ h2 {
 }
 
 button {
-  background: transparent;
-  border: 1px solid var(--accent-color);
-  border-radius: 4px;
-  color: var(--accent-color);
+  background: #fff;
+  border: 2px solid var(--color-marker-blue);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  color: var(--color-marker-blue);
   cursor: pointer;
-  padding: 10px 20px;
-  transition: all 0.3s ease;
+  font-family: var(--font-informal-labels);
+  font-size: 1.1rem;
+  padding: 8px 18px;
+  transform: rotate(-1deg);
+  transition: all 0.2s ease;
 }
 
 button.active,
 button:hover {
-  background: var(--accent-color);
+  background: var(--color-marker-blue);
+  color: #fff;
+  transform: rotate(1deg) scale(1.05);
+}
+
+button.btn-danger {
+  border-color: var(--color-felt-red);
+  color: var(--color-felt-red);
+}
+
+button.btn-danger:hover {
+  background: var(--color-felt-red);
   color: #fff;
 }
 
 select {
   background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 2px solid var(--color-marker-blue);
+  border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
+  font-family: var(--font-informal-labels);
+  font-size: 1.1rem;
   padding: 10px;
   width: 100%;
 }
@@ -305,8 +321,10 @@ button.btn-danger:hover {
 }
 
 .input-group input {
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 2px solid var(--color-marker-blue);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  font-family: var(--font-informal-labels);
+  font-size: 1.1rem;
   padding: 10px;
   width: 100%;
 }
