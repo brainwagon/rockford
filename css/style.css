@@ -5,6 +5,19 @@
   --primary-color: #2c3e50;
   --secondary-color: #34495e;
   --text-color: #333;
+
+  /* Informal Design Theme (Whimsical/Casual) */
+  --font-informal-heading: 'Gloria Hallelujah', cursive;
+  --font-informal-body: 'Indie Flower', cursive;
+  --font-informal-labels: 'Patrick Hand', cursive;
+
+  --color-marker-blue: #2e5cb8;
+  --color-felt-red: #d92b2b;
+  --color-tape-yellow: #fdfd96;
+  --color-marker-green: #228b22;
+  --color-craft-paper: #d2b48c;
+  --color-cardboard: #8b5a2b;
+  --color-pen-black: #1a1a1a;
 }
 
 * {
