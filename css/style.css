@@ -27,6 +27,59 @@ header {
   text-align: center;
 }
 
+nav {
+  margin-top: 10px;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 5px 10px;
+  text-decoration: underline;
+}
+
+.nav-link:hover {
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+/* Dialog Styles */
+dialog {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  margin: auto;
+  max-width: 500px;
+  padding: 0;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+  padding: 30px;
+}
+
+.dialog-content h2 {
+  border-bottom: 2px solid var(--bg-color);
+  margin-bottom: 15px;
+}
+
+.dialog-content p {
+  margin-bottom: 15px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
 #app {
   display: grid;
   gap: 40px;

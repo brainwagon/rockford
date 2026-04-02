@@ -68,7 +68,24 @@ const FALLBACK_FORMAT = parseFormat(FALLBACK_FORMAT_MD);
 export async function initApp() {
   const btnLandscape = document.getElementById('btn-landscape');
   const btnPortrait = document.getElementById('btn-portrait');
+  const btnAbout = document.getElementById('btn-about');
+  const aboutDialog = document.getElementById('about-dialog');
+  const btnCloseAbout = document.getElementById('btn-close-about');
   const businessCard = document.getElementById('business-card');
+
+  // Handle "About" dialog
+  if (btnAbout && aboutDialog) {
+    btnAbout.addEventListener('click', () => {
+      aboutDialog.showModal();
+    });
+  }
+
+  if (btnCloseAbout && aboutDialog) {
+    btnCloseAbout.addEventListener('click', () => {
+      aboutDialog.close();
+    });
+  }
+
   const formatSelect = document.getElementById('format-select');
   const fontSelect = document.getElementById('font-select');
   const inputWebsite = document.getElementById('input-website');

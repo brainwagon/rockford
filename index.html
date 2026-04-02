@@ -12,6 +12,9 @@
   <body>
     <header>
       <h1>Rockford</h1>
+      <nav>
+        <button id="btn-about" class="nav-link">About...</button>
+      </nav>
     </header>
     <main id="app">
       <section id="editor">
@@ -123,6 +126,17 @@
       </section>
     </main>
     <div id="print-sheet"></div>
+    <dialog id="about-dialog">
+      <div class="dialog-content">
+        <h2>About Rockford</h2>
+        <p>Rockford is a low-budget business card designer, designed for individual professionals who need a simple, high-quality way to generate custom business cards.</p>
+        <p>The name and concept are inspired in part by <em>The Rockford Files</em>, where private investigator James Rockford kept a small printing press in the back of his car. He used it to print bespoke business cards on the fly, allowing him to adopt different personas and gather crucial information for his cases.</p>
+        <p>Rockford is the work of Mark VandeWettering, created in collaboration with the AI coding agents Claude Code and Gemini.</p>
+        <div class="dialog-actions">
+          <button id="btn-close-about">Close</button>
+        </div>
+      </div>
+    </dialog>
     <script src="js/app.js" type="module"></script>
   </body>
 </html>
