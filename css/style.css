@@ -163,73 +163,25 @@ select {
   font-family: var(--heading-font, inherit);
 }
 
-.logo-container {
-  align-items: center;
-  display: flex;
-  height: 60px;
-  justify-content: center;
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 60px;
+.card-logo {
+  display: block;
 }
 
-.logo-container img {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-.qr-container {
-  align-items: center;
-  background: #fff;
-  bottom: 20px;
-  display: none;
-  height: 60px;
-  justify-content: center;
-  padding: 2px;
-  position: absolute;
-  right: 20px;
-  width: 60px;
-}
-
-.qr-container.active {
-  display: flex;
-}
-
-.qr-container img {
-  max-height: 100%;
-  max-width: 100%;
-}
-
-/* Template Styles */
-#business-card.modern {
-  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-  border-left: 10px solid var(--accent-color);
-}
-
-#business-card.modern #card-name-display {
-  color: var(--accent-color);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-#business-card.elegant {
-  background: #fff;
-  border: 1px solid #d4af37; /* Gold */
-  font-family: 'Georgia', serif;
-}
-
-#business-card.elegant .card-content {
-  border: 5px solid #f9f9f9;
-}
-
-#business-card.elegant #card-name-display {
-  border-bottom: 1px solid #d4af37;
-  color: #000;
+.card-logo img {
   display: inline-block;
-  font-style: italic;
-  font-weight: normal;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.card-qrcode {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.card-qrcode img {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 /* Print Styles */
@@ -290,48 +242,54 @@ select {
 .card-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 100%;
-  padding: 20px;
+  height: 100%;
 }
 
-.card-text {
-  align-items: flex-start;
+.card-segment {
+  display: flex;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.card-column {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+/* Reset all browser defaults inside the card so format files have full control.
+   line-height reads from the --card-line-height custom property set by the
+   renderer when a LineHeight metadata value is present; falls back to 1. */
+#business-card * {
+  box-sizing: border-box;
+  line-height: var(--card-line-height, 1);
+  margin: 0;
+  padding: 0;
+}
+
+.card-field {
+  display: block;
+}
+
+.card-vspace {
+  flex-shrink: 0;
+}
+
+.card-vpad {
+  flex-grow: 1;
+  flex-shrink: 0;
 }
 
 #card-name-display {
   color: var(--primary-color);
-  display: inline-block;
-  font-size: 1.5rem;
-  margin-bottom: 5px;
   white-space: nowrap;
 }
 
-#card-title-display {
-  color: #666;
-  display: inline-block;
-  font-size: 0.9rem;
-  margin-bottom: 5px;
-  white-space: nowrap;
-}
-
+#card-title-display,
 #card-company-display {
   color: #666;
-  display: inline-block;
-  font-size: 0.8rem;
-  margin-bottom: 10px;
   white-space: nowrap;
-}
-
-.card-contact {
-  color: #444;
-  font-size: 0.75rem;
-}
-
-.card-contact p {
-  margin-bottom: 2px;
 }
 
 @media (max-width: 768px) {

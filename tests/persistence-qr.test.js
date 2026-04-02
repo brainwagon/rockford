@@ -17,10 +17,10 @@ describe('QR Persistence', () => {
   beforeEach(() => {
     dom = new JSDOM(html, { runScripts: "dangerously", resources: "usable" });
     document = dom.window.document;
-    
+
     global.document = document;
     global.window = dom.window;
-    
+
     const localStorageMock = (() => {
       let store = {};
       return {
@@ -36,33 +36,42 @@ describe('QR Persistence', () => {
     global.localStorage = localStorageMock;
 
     // Mock qrcode-generator
-    global.qrcode = (typeNumber, errorCorrectionLevel) => ({
+    global.qrcode = () => ({
       addData: vi.fn(),
       make: vi.fn(),
-      createImgTag: vi.fn(() => '<img src="mock-qr">')
+      createImgTag: vi.fn(() => '<img src="mock-qr">'),
     });
   });
 
-  it('should save the QR toggle state to localStorage', async () => {
-    initApp();
-    const toggle = document.getElementById('input-qr-toggle');
-    toggle.checked = true;
-    toggle.dispatchEvent(new dom.window.Event('change'));
+  it('should show QR element when modern format is loaded and website is set', async () => {
+    await initApp();
+    const formatSelect = document.getElementById('format-select');
+    formatSelect.value = 'modern.md';
+    formatSelect.dispatchEvent(new dom.window.Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Wait for debounce
-    await new Promise(resolve => setTimeout(resolve, 600));
+    document.getElementById('input-website').value = 'https://example.com';
+    document.getElementById('input-website').dispatchEvent(
+        new dom.window.Event('input'));
 
-    expect(global.localStorage.setItem).toHaveBeenCalled();
-    const savedData = JSON.parse(global.localStorage.getItem('bmaker_state'));
-    expect(savedData.qrEnabled).toBe(true);
+    const qrEl = document.getElementById('card-qr-display');
+    expect(qrEl).not.toBeNull();
+    expect(qrEl.style.display).not.toBe('none');
   });
 
-  it('should restore the QR state from localStorage on init', () => {
-    global.localStorage.setItem('bmaker_state', JSON.stringify({ qrEnabled: true }));
-    
-    initApp();
-    
-    expect(document.getElementById('input-qr-toggle').checked).toBe(true);
-    expect(document.getElementById('card-qr-display').classList.contains('active')).toBe(true);
+  it('should hide QR element when website is cleared', async () => {
+    await initApp();
+    const formatSelect = document.getElementById('format-select');
+    formatSelect.value = 'modern.md';
+    formatSelect.dispatchEvent(new dom.window.Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const websiteInput = document.getElementById('input-website');
+    websiteInput.value = '';
+    websiteInput.dispatchEvent(new dom.window.Event('input'));
+
+    const qrEl = document.getElementById('card-qr-display');
+    expect(qrEl).not.toBeNull();
+    expect(qrEl.style.display).toBe('none');
   });
 });

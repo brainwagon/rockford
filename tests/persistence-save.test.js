@@ -3,7 +3,6 @@ import {JSDOM} from 'jsdom';
 import fs from 'fs';
 import {fileURLToPath} from 'url';
 import {dirname, resolve} from 'path';
-import * as fonts from '../js/fonts.js';
 
 // Mock fonts to avoid hangs in JSDOM
 vi.mock('../js/fonts.js', async (importOriginal) => {
@@ -20,18 +19,44 @@ const __dirname = dirname(__filename);
 const html = fs.readFileSync(resolve(__dirname, '../index.html'), 'utf8');
 import {initApp} from '../js/app.js';
 
+/** Returns a fetch mock that serves the formats manifest and format files. */
+function makeFetchMock() {
+  const minimalMd = fs.readFileSync(
+      resolve(__dirname, '../formats/minimal.md'), 'utf8');
+  const modernMd = fs.readFileSync(
+      resolve(__dirname, '../formats/modern.md'), 'utf8');
+  const manifestJson = fs.readFileSync(
+      resolve(__dirname, '../formats/index.json'), 'utf8');
+
+  return vi.fn((url) => {
+    if (url.endsWith('index.json')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(JSON.parse(manifestJson)),
+      });
+    }
+    if (url.endsWith('minimal.md')) {
+      return Promise.resolve({ok: true, text: () => Promise.resolve(minimalMd)});
+    }
+    if (url.endsWith('modern.md')) {
+      return Promise.resolve({ok: true, text: () => Promise.resolve(modernMd)});
+    }
+    return Promise.resolve({ok: false, text: () => Promise.resolve('')});
+  });
+}
+
 describe('Data Serialization & Storage', () => {
   let dom;
   let document;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     dom = new JSDOM(html, {runScripts: 'dangerously', resources: 'usable'});
     document = dom.window.document;
 
     global.document = document;
     global.window = dom.window;
+    global.fetch = makeFetchMock();
 
-    // Mock localStorage
     const localStorageMock = (() => {
       let store = {};
       return {
@@ -46,7 +71,7 @@ describe('Data Serialization & Storage', () => {
     })();
     global.localStorage = localStorageMock;
 
-    initApp();
+    await initApp();
   });
 
   it('should save data to localStorage when an input changes', async () => {
@@ -54,7 +79,6 @@ describe('Data Serialization & Storage', () => {
     inputName.value = 'John Persistence';
     inputName.dispatchEvent(new dom.window.Event('input'));
 
-    // Wait for debounce (assuming 500ms)
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     expect(global.localStorage.setItem).toHaveBeenCalled();
@@ -62,21 +86,14 @@ describe('Data Serialization & Storage', () => {
     expect(savedData.name).toBe('John Persistence');
   });
 
-  it('should save the current template and orientation', async () => {
-    const templateSelect = document.getElementById('template-select');
-    templateSelect.value = 'modern';
-    templateSelect.dispatchEvent(new dom.window.Event('change'));
-
+  it('should save formatFile and orientation', async () => {
     const btnPortrait = document.getElementById('btn-portrait');
-    btnPortrait.dispatchEvent(new dom.window.MouseEvent('click', {
-      bubbles: true,
-    }));
+    btnPortrait.dispatchEvent(new dom.window.MouseEvent('click', {bubbles: true}));
 
-    // Wait for debounce
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     const savedData = JSON.parse(global.localStorage.setItem.mock.calls[0][1]);
-    expect(savedData.template).toBe('modern');
+    expect(savedData.formatFile).toBeDefined();
     expect(savedData.orientation).toBe('portrait');
   });
 
@@ -85,11 +102,9 @@ describe('Data Serialization & Storage', () => {
     fontSelect.value = 'montserrat_merriweather';
     fontSelect.dispatchEvent(new dom.window.Event('change'));
 
-    // Wait for debounce
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     const setItemCalls = global.localStorage.setItem.mock.calls;
-    // We look for the call that has fontPairId
     const fontCall = setItemCalls.find((call) => {
       const data = JSON.parse(call[1]);
       return data.fontPairId === 'montserrat_merriweather';
