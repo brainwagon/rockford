@@ -119,7 +119,16 @@ function createColumnElement(colDef, data) {
   const colEl = document.createElement('div');
   colEl.className = 'card-column';
   if (colDef.width) colEl.style.width = colDef.width;
-  if (colDef.alignment) colEl.style.textAlign = colDef.alignment;
+  if (colDef.alignment) {
+    colEl.style.textAlign = colDef.alignment;
+    if (colDef.alignment === 'center') {
+      colEl.style.alignItems = 'center';
+    } else if (colDef.alignment === 'right') {
+      colEl.style.alignItems = 'flex-end';
+    } else if (colDef.alignment === 'left') {
+      colEl.style.alignItems = 'flex-start';
+    }
+  }
 
   for (const item of colDef.items) {
     colEl.appendChild(createFieldElement(item, data[item.field] || '', data));
