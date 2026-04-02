@@ -435,8 +435,13 @@ button.btn-danger:hover {
 #business-card {
   background: #fff;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  transform: rotate(1deg);
   transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease,
-    color 0.3s ease;
+    color 0.3s ease, transform 0.3s ease;
+}
+
+#business-card:hover {
+  transform: rotate(0deg) scale(1.02);
 }
 
 #card-name-display,
@@ -503,6 +508,7 @@ button.btn-danger:hover {
     margin: 0 !important;
     position: relative !important;
     top: auto !important;
+    transform: none !important;
     width: 3.5in !important;
   }
 
