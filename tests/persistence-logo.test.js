@@ -68,12 +68,12 @@ describe('Logo Persistence', () => {
     await new Promise(resolve => setTimeout(resolve, 800));
 
     expect(global.localStorage.setItem).toHaveBeenCalled();
-    const savedData = JSON.parse(global.localStorage.getItem('bmaker_state'));
+    const savedData = JSON.parse(global.localStorage.getItem('rockford_state'));
     expect(savedData.logo).toBe(mockLogoData);
   });
 
   it('should restore the logo from localStorage on init', () => {
-    global.localStorage.setItem('bmaker_state', JSON.stringify({ logo: mockLogoData }));
+    global.localStorage.setItem('rockford_state', JSON.stringify({ logo: mockLogoData }));
     
     initApp();
     

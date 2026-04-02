@@ -63,7 +63,7 @@ const FALLBACK_FORMAT_MD = `# Business Card Template
 const FALLBACK_FORMAT = parseFormat(FALLBACK_FORMAT_MD);
 
 /**
- * Initializes the business card generator application.
+ * Initializes the Rockford application.
  */
 export async function initApp() {
   const btnLandscape = document.getElementById('btn-landscape');
@@ -291,7 +291,7 @@ export async function initApp() {
             'landscape' : 'portrait',
         logo: currentLogoSrc || undefined,
       };
-      localStorage.setItem('bmaker_state', JSON.stringify(state));
+      localStorage.setItem('rockford_state', JSON.stringify(state));
     };
 
     clearTimeout(saveTimeout);
@@ -598,7 +598,7 @@ export async function initApp() {
   //    (orientation, logo, QR) before async format loading begins.
   let savedState = null;
   try {
-    const raw = localStorage.getItem('bmaker_state');
+    const raw = localStorage.getItem('rockford_state');
     if (raw) savedState = JSON.parse(raw);
   } catch (e) { /* ignore */ }
 

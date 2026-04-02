@@ -28,7 +28,7 @@ describe('Index HTML Structure', () => {
   it('should have a header with a title', () => {
     const header = document.querySelector('header h1');
     expect(header).not.toBeNull();
-    expect(header.textContent).toContain('Business Card Generator');
+    expect(header.textContent).toContain('Rockford');
   });
 
   it('should have a section for the editor', () => {

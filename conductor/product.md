@@ -3,7 +3,7 @@ I want to build a simple html/vanilla javascript app that can be used to generat
 
 ---
 
-# Product Definition: Business Card Generator
+# Product Definition: Rockford
 
 ## Product Vision
 To provide a simple, elegant, and efficient way for individual professionals to generate high-quality custom business cards.

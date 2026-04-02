@@ -1,4 +1,4 @@
-# Tech Stack: Business Card Generator
+# Tech Stack: Rockford
 
 ## Frontend Core
 - **Language:** **Vanilla JavaScript (ES6+).** Leveraging modern JavaScript features for a clean, expressive, and browser-native codebase.

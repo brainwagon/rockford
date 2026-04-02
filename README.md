@@ -1,4 +1,4 @@
-# Business Card Generator
+# Rockford
 
 A simple, elegant, and efficient way for individual professionals to generate high-quality custom business cards.
 

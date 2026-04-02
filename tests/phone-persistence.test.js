@@ -46,7 +46,7 @@ describe('Phone Number Persistence', () => {
     // Mock localStorage with predefined data
     const localStorageMock = (() => {
       let store = {
-        'bmaker_state': JSON.stringify(mockState),
+        'rockford_state': JSON.stringify(mockState),
       };
       return {
         getItem: vi.fn((key) => store[key] || null),

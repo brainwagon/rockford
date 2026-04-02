@@ -1,4 +1,4 @@
-# Product Guidelines: Business Card Generator
+# Product Guidelines: Rockford
 
 ## Tone & Voice
 - **Voice:** Professional, Polite, and Reassuring. The app should sound like a helpful assistant that understands the importance of a professional's identity.
