@@ -70,4 +70,27 @@ describe('Informal Theme Foundation', () => {
     expect(preview.classList.contains('texture-cardboard')).toBe(true);
     expect(preview.classList.contains('paper-layer')).toBe(true);
   });
+
+  it('should have organic shapes and informal fonts for interactive elements', () => {
+    expect(css).toContain('button {');
+    expect(css).toContain('border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;');
+    expect(css).toContain('font-family: var(--font-informal-labels);');
+    
+    expect(css).toContain('select {');
+    expect(css).toContain('border: 2px solid var(--color-marker-blue);');
+    
+    expect(css).toContain('.input-group input {');
+    expect(css).toContain('border: 2px solid var(--color-marker-blue);');
+  });
+
+  it('should have decorative elements in index.html', () => {
+    const tapes = document.querySelectorAll('.tape');
+    expect(tapes.length).toBeGreaterThanOrEqual(2);
+    
+    const editorTape = document.querySelector('#editor .tape');
+    expect(editorTape).not.toBeNull();
+    
+    const previewTape = document.querySelector('#preview .tape');
+    expect(previewTape).not.toBeNull();
+  });
 });
