@@ -522,7 +522,16 @@ export async function initApp() {
   if (btnExportPng) {
     btnExportPng.addEventListener('click', () => {
       if (typeof html2canvas === 'undefined') return;
-      html2canvas(businessCard, {scale: 3}).then((canvas) => {
+      html2canvas(businessCard, {
+        scale: 3,
+        onclone: (clonedDoc) => {
+          const clonedCard = clonedDoc.getElementById('business-card');
+          if (clonedCard) {
+            clonedCard.style.transform = 'none';
+            clonedCard.style.boxShadow = 'none';
+          }
+        },
+      }).then((canvas) => {
         const link = document.createElement('a');
         link.download = `business-card-${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
@@ -535,7 +544,16 @@ export async function initApp() {
     btnExportPdf.addEventListener('click', () => {
       if (typeof html2canvas === 'undefined' ||
           typeof window.jspdf === 'undefined') return;
-      html2canvas(businessCard, {scale: 3}).then((canvas) => {
+      html2canvas(businessCard, {
+        scale: 3,
+        onclone: (clonedDoc) => {
+          const clonedCard = clonedDoc.getElementById('business-card');
+          if (clonedCard) {
+            clonedCard.style.transform = 'none';
+            clonedCard.style.boxShadow = 'none';
+          }
+        },
+      }).then((canvas) => {
         const {jsPDF} = window.jspdf;
         const isLandscape = businessCard.classList.contains('landscape');
         const doc = new jsPDF({
